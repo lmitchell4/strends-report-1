@@ -1,0 +1,196 @@
+# Package ID: edi.244.1 Cataloging System:https://pasta.edirepository.org.
+# Data set title: Interagency Ecological Program: Over four decades of juvenile fish monitoring data from the San Francisco Estuary, collected by the Delta Juvenile Fish Monitoring Program, 1976-2017.
+# Data set creator:   Interagency Ecological Program (IEP) -  
+# Data set creator:  Brian Mahardja - United States Fish and Wildlife Service 
+# Data set creator:  Jonathan Speegle - United States Fish and Wildlife Service 
+# Contact:  Brian Mahardja Delta Juvenile Fish Monitoring Program Supervisor -  United States Fish and Wildlife Service  - brian_mahardja@fws.gov
+# Contact:  Jonathan Speegle Data Manager -  United States Fish and Wildlife Service  - jonathan_speegle@fws.gov
+# Stylesheet for metadata conversion into program: John H. Porter, Univ. Virginia, jporter@Virginia.edu 
+#
+#install package tidyverse if not already installed
+if(!require(tidyverse)){ install.packages("tidyverse") }  
+library("tidyverse") 
+infile1 <- trimws("https://pasta.lternet.edu/package/data/eml/edi/244/1/1c7e55b76e6455b3093f6a66cb3ba38c") 
+infile1 <-sub("^https","http",infile1)
+# This creates a tibble named: dt1 
+	dt1 <-read_delim(infile1  
+                ,delim=","   
+                ,skip=1 
+                    ,quote='"'  
+                    , col_names=c( 
+                        "Location",   
+                        "RegionCode",   
+                        "StationCode",   
+                        "SampleDate",   
+                        "SampleTime",   
+                        "MethodCode",   
+                        "GearConditionCode",   
+                        "WeatherCode",   
+                        "DO",   
+                        "WaterTemperature",   
+                        "Turbidity",   
+                        "Secchi",   
+                        "Conductivity",   
+                        "TowNumber",   
+                        "TowDirectionCode",   
+                        "TowDuration",   
+                        "flowDebris",   
+                        "SiteDisturbance",   
+                        "AlternateSite",   
+                        "SeineLength",   
+                        "SeineWidth",   
+                        "SeineDepth",   
+                        "StartMeter",   
+                        "EndMeter",   
+                        "TotalMeter",   
+                        "Volume",   
+                        "OrganismCode",   
+                        "CommonName",   
+                        "MarkCode",   
+                        "StageCode",   
+                        "Maturation",   
+                        "ForkLength",   
+                        "RaceByLength",   
+                        "Count"   ), 
+                    col_types=list( 
+                        col_character(),  
+                        col_character(),  
+                        col_character(),  
+                        col_date("%Y-%m-%d"),   
+                        col_character(),  
+                        col_character(),  
+                        col_character(), 
+                        col_number() , 
+                        col_number() , 
+                        col_number() , 
+                        col_number() , 
+                        col_number() , 
+                        col_number() ,  
+                        col_character(), 
+                        col_number() ,  
+                        col_character(),  
+                        col_character(),  
+                        col_character(), 
+                        col_number() , 
+                        col_number() , 
+                        col_number() , 
+                        col_number() , 
+                        col_number() , 
+                        col_number() , 
+                        col_number() ,  
+                        col_character(),  
+                        col_character(),  
+                        col_character(),  
+                        col_character(),  
+                        col_character(), 
+                        col_number() ,  
+                        col_character(), 
+                        col_number() ), 
+                        na=c( "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "n/p", "n/p", "n/p", " ","NA")  ) 
+# Observed issues when reading the data. An empty list is good!
+problems(dt1) 
+# Here is the structure of the input data tibble: 
+glimpse(dt1) 
+# And some statistical summaries of the data 
+summary(dt1) 
+# Get more details on character variables
+                     
+summary(as.factor(dt1$Location)) 
+summary(as.factor(dt1$RegionCode)) 
+summary(as.factor(dt1$StationCode)) 
+summary(as.factor(dt1$MethodCode)) 
+summary(as.factor(dt1$GearConditionCode)) 
+summary(as.factor(dt1$WeatherCode)) 
+summary(as.factor(dt1$TowDirectionCode)) 
+summary(as.factor(dt1$flowDebris)) 
+summary(as.factor(dt1$SiteDisturbance)) 
+summary(as.factor(dt1$AlternateSite)) 
+summary(as.factor(dt1$OrganismCode)) 
+summary(as.factor(dt1$CommonName)) 
+summary(as.factor(dt1$MarkCode)) 
+summary(as.factor(dt1$StageCode)) 
+summary(as.factor(dt1$Maturation)) 
+summary(as.factor(dt1$RaceByLength)) 
+infile2 <- trimws("https://pasta.lternet.edu/package/data/eml/edi/244/1/17c9974d9b7b0125c146a887f3c64bd8") 
+infile2 <-sub("^https","http",infile2)
+# This creates a tibble named: dt2 
+	dt2 <-read_delim(infile2  
+                ,delim=","   
+                ,skip=1 
+                    ,quote='"'  
+                    , col_names=c( 
+                        "OrganismCode",   
+                        "CommonName",   
+                        "NonNative",   
+                        "Phylum",   
+                        "Class",   
+                        "Order",   
+                        "Family",   
+                        "Genus",   
+                        "Species",   
+                        "Active"   ), 
+                    col_types=list( 
+                        col_character(),  
+                        col_character(),  
+                        col_character(),  
+                        col_character(),  
+                        col_character(),  
+                        col_character(),  
+                        col_character(),  
+                        col_character(),  
+                        col_character(),  
+                        col_character()), 
+                        na=c( "NA", "NA", "NA", "NA", "NA", "NA", " ","NA")  ) 
+# Observed issues when reading the data. An empty list is good!
+problems(dt2) 
+# Here is the structure of the input data tibble: 
+glimpse(dt2) 
+# And some statistical summaries of the data 
+summary(dt2) 
+# Get more details on character variables
+                     
+summary(as.factor(dt2$OrganismCode)) 
+summary(as.factor(dt2$CommonName)) 
+summary(as.factor(dt2$NonNative)) 
+summary(as.factor(dt2$Phylum)) 
+summary(as.factor(dt2$Class)) 
+summary(as.factor(dt2$Order)) 
+summary(as.factor(dt2$Family)) 
+summary(as.factor(dt2$Genus)) 
+summary(as.factor(dt2$Species)) 
+summary(as.factor(dt2$Active)) 
+infile3 <- trimws("https://pasta.lternet.edu/package/data/eml/edi/244/1/99a038d691f27cd306ff93fdcbc03b77") 
+infile3 <-sub("^https","http",infile3)
+# This creates a tibble named: dt3 
+	dt3 <-read_delim(infile3  
+                ,delim=","   
+                ,skip=1 
+                    ,quote='"'  
+                    , col_names=c( 
+                        "MethodCode",   
+                        "Location",   
+                        "StationCode",   
+                        "Latitude_location",   
+                        "Longitude_location"   ), 
+                    col_types=list( 
+                        col_character(),  
+                        col_character(),  
+                        col_character(), 
+                        col_number() , 
+                        col_number() ), 
+                        na=c( " ","NA")  ) 
+# Observed issues when reading the data. An empty list is good!
+problems(dt3) 
+# Here is the structure of the input data tibble: 
+glimpse(dt3) 
+# And some statistical summaries of the data 
+summary(dt3) 
+# Get more details on character variables
+                     
+summary(as.factor(dt3$MethodCode)) 
+summary(as.factor(dt3$Location)) 
+summary(as.factor(dt3$StationCode))
+
+
+
+
