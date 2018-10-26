@@ -49,7 +49,8 @@ flowindex_path = os.path.join(root_dir, 'FLOW', 'dayflowCalculations2017.csv').r
 flowindex = pd.read_csv(flowindex_path)
 #import all flow data to date
 flow_path = os.path.join(root_dir, 'flow', 'flow_1929-10-01_2017-09-30.csv').replace('scripts','data')
-flow = pd.read_csv(flow_path)
+flow = pd.read_csv(flow_path, index_col = [0])
+flow.index = pd.to_datetime(flow.index)
 #IMPORT ZOOPLANKTON
 #convert counts to biomass using taxon specific weights
 CBmatrix_path = os.path.join(root_dir, 'ZOO', '1972-2017CBMatrix.xlsx').replace('scripts','data')
@@ -64,5 +65,9 @@ emp_phyto_url = r'https://emp.baydeltalive.com/assets/06942155460a79991fdf1b57f6
 emp_phyto = pd.read_csv(emp_phyto_url)
 
 ybp_salmon_url = r'http://pasta.lternet.edu/package/data/eml/edi/233/1/8b5ba731b0956bf719d3abaacdda5c70'
-s=requests.get(ybp_salmon_url).content
-ybp_salmon =pd.read_csv(io.StringIO(s.decode('utf-8')))
+s = requests.get(ybp_salmon_url).content
+ybp_salmon = pd.read_csv(io.StringIO(s.decode('utf-8')))
+
+
+#read in CDFW databases
+
