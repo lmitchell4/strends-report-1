@@ -148,10 +148,16 @@ Pumpmatrix = pd.read_excel(Pumpmatrix_path,
 emp_phyto_url = r'https://emp.baydeltalive.com/assets/06942155460a79991fdf1b57f641b1b4/text/csv/Phytoplankton_Algal_Type_Data_1975_-2016.csv'
 emp_phyto = pd.read_csv(emp_phyto_url)
 
+# IMPORT FISH DATA
+#YOLO BYP SALMON FISH
 ybp_salmon_url = r'http://pasta.lternet.edu/package/data/eml/edi/233/1/8b5ba731b0956bf719d3abaacdda5c70'
 s = requests.get(ybp_salmon_url).content
 ybp_salmon = pd.read_csv(io.StringIO(s.decode('utf-8')))
 
+the
+# USFWS Delta Juvenile Fish Monitoring Program
+
+djfmp__url = r'https://portal.edirepository.org/nis/dataviewer?packageid=edi.244.2&entityid=1c7e55b76e6455b3093f6a66cb3ba38c'
 
 # move files from ftp to local space
 # TODO: ONLY COPY FILES IF AND ONLY IF THEY ARE UPDATED)
