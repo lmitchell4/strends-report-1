@@ -142,13 +142,22 @@ CBmatrix = pd.read_excel(CBmatrix_path,
                          sheet_name='CB CPUE Matrix 1972-2017')
 
 mysid_fname = '1972-2017MysidMatrix.xlsx'
-Mysidmatrix_path = os.path.join(root_dir, 'ZOO',).replace('scripts',
-                               'data')
+#Mysidmatrix_path = os.path.join(root_dir, 'ZOO',
+#                                mysid_fname).replace('scripts',
+#                               'data')
+get_ftp_file(cdfw_ftp_path, 'IEP_Zooplankton', mysid_fname,
+             to_path=zoo_data_path)
+
+Mysidmatrix_path = os.path.join(zoo_data_path, mysid_fname)
 Mysidmatrix = pd.read_excel(Mysidmatrix_path,
                             sheet_name='Mysid CPUE Matrix 1972-2017')
+
+
 pump_fname = '1972-2017PumpMatrix.xlsx'
-Pumpmatrix_path = os.path.join(root_dir, 'ZOO',
-                               pump_fname).replace('scripts', 'data')
+#Pumpmatrix_path = os.path.join(root_dir, 'ZOO',
+#                               pump_fname).replace('scripts', 'data')
+Pumpmatrix_path = os.path.join(zoo_data_path, pump_fname)
+
 Pumpmatrix = pd.read_excel(Pumpmatrix_path,
                            sheet_name='Pump CPUE Matrix 1972-2017')
 # IMPORT PHYTO DATA
