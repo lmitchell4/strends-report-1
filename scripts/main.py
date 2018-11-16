@@ -122,25 +122,33 @@ flow.index = pd.to_datetime(flow.index)
 # TODO: Convert counts to biomass using taxon specific weights
 
 # Read from ftp directly
+zoo_data_path = os.path.join(os.pardir, r"data\ZOO")
+
 # dfg_zoo_ftp_path = 'ftp://ftp.dfg.ca.gov/IEP_Zooplankton'
 # CBmatrix_path = os.path.join(dfg_zoo_ftp_path, '1972-2017CBMatrix.xlsx')
+cdfw_ftp_path = 'ftp.dfg.ca.gov'
+# Smelt Larva Survey (CDFW): Longfin Smelt
+cb_fname = '1972-2017CBMatrix.xlsx'
+get_ftp_file(cdfw_ftp_path, 'IEP_Zooplankton', cb_fname,
+             to_path=zoo_data_path)
+CBmatrix_path = os.path.join(zoo_data_path, cb_fname)
+
 
 # Read data from flat files on local machine
-CBmatrix_path = os.path.join(root_dir, 'ZOO',
-                             '1972-2017CBMatrix.xlsx').replace('scripts',
-                                                               'data')
+#CBmatrix_path = os.path.join(root_dir, 'ZOO',
+#                             cb_fname).replace('scripts', 'data')
 
+CBmatrix = pd.read_excel(CBmatrix_path,
+                         sheet_name='CB CPUE Matrix 1972-2017')
 
-CBmatrix = pd.read_excel(CBmatrix_path, sheet_name='CB CPUE Matrix 1972-2017')
-
-Mysidmatrix_path = os.path.join(root_dir, 'ZOO',
-                                '1972-2017MysidMatrix.xlsx').replace('scripts',
-                                                                     'data')
+mysid_fname = '1972-2017MysidMatrix.xlsx'
+Mysidmatrix_path = os.path.join(root_dir, 'ZOO',).replace('scripts',
+                               'data')
 Mysidmatrix = pd.read_excel(Mysidmatrix_path,
                             sheet_name='Mysid CPUE Matrix 1972-2017')
+pump_fname = '1972-2017PumpMatrix.xlsx'
 Pumpmatrix_path = os.path.join(root_dir, 'ZOO',
-                               '1972-2017PumpMatrix.xlsx').replace('scripts',
-                                                                   'data')
+                               pump_fname).replace('scripts', 'data')
 Pumpmatrix = pd.read_excel(Pumpmatrix_path,
                            sheet_name='Pump CPUE Matrix 1972-2017')
 # IMPORT PHYTO DATA
@@ -148,30 +156,37 @@ Pumpmatrix = pd.read_excel(Pumpmatrix_path,
 emp_phyto_url = r'https://emp.baydeltalive.com/assets/06942155460a79991fdf1b57f641b1b4/text/csv/Phytoplankton_Algal_Type_Data_1975_-2016.csv'
 emp_phyto = pd.read_csv(emp_phyto_url)
 
+
+
 # IMPORT FISH DATA
+data_path = os.path.join(os.pardir, r"data\FISH")
+# From EDI repos
 #YOLO BYP SALMON FISH
 ybp_salmon_url = r'http://pasta.lternet.edu/package/data/eml/edi/233/1/8b5ba731b0956bf719d3abaacdda5c70'
-s = requests.get(ybp_salmon_url).content
-ybp_salmon = pd.read_csv(io.StringIO(s.decode('utf-8')))
-
-the
+ybp_edi = requests.get(ybp_salmon_url).content
+ybp_salmon = pd.read_csv(io.StringIO(ybp_edi.decode('utf-8')))
+# save the file locally
+ybp_salmon.to_csv(os.path.join(data_path, 'ybp_salmon.csv'))
 # USFWS Delta Juvenile Fish Monitoring Program
-
-djfmp__url = r'https://portal.edirepository.org/nis/dataviewer?packageid=edi.244.2&entityid=1c7e55b76e6455b3093f6a66cb3ba38c'
+djfmp_url = r'https://pasta.lternet.edu/package/data/eml/edi/244/2/1c7e55b76e6455b3093f6a66cb3ba38c'
+djfmps_edi = requests.get(djfmp_url).content
+djfmp = pd.read_csv(io.StringIO(djfmps_edi.decode('utf-8')))
+# save the file locally
+djfmp.to_csv(os.path.join(data_path, 'djfmp.csv'))
 
 # move files from ftp to local space
 # TODO: ONLY COPY FILES IF AND ONLY IF THEY ARE UPDATED)
-data_path = os.path.join(os.pardir, r"data\fish")
-cdfw_ftp_path = 'ftp.dfg.ca.gov'
+
 # Smelt Larva Survey (CDFW): Longfin Smelt
 sls_fname = 'SLS.mdb'
 get_ftp_file(cdfw_ftp_path, 'Delta Smelt', sls_fname, to_path=data_path)
 sls_ds_path = os.path.join(data_path, sls_fname)
 
 # Spring Kodiak
+skt_fname = 'SKT.mdb'
 # Careful and be prepared to wait bc SKT is a large file (~400 MB)!
-# get_ftp_file(cdfw_ftp_path, 'Delta Smelt', 'SKT.mdb', to_path=data_path)
-# sls_ls_path = os.path.join(data_path, sls_fname)
+get_ftp_file(cdfw_ftp_path, 'Delta Smelt', skt_fname, to_path=data_path)
+skt_ls_path = os.path.join(data_path, skt_fname)
 
 # Bay Study (CDFW): Longfin Smelt
 ls_smelt_fname_zip = 'Bay Study_FishCatchMatrices_1980-2017.zip'
@@ -192,10 +207,8 @@ ls_smelt['Datetime'] = pd.to_datetime(ls_smelt['Date'])
 # create a multi-indexed dataframe based on date and station of smelt data
 ls_smelt.set_index(['Datetime', 'Station'], inplace=True)
 
-ls_smelt.iloc['DELSME', 'LONSME']
-
 # connect to CDFW access database files
-MDB = os.path.join(root_dir, r'data\fish\SLS.mdb')
+MDB = sls_ds_path #sls_ds_path
 DRV = '{Microsoft Access Driver (*.mdb, *.accdb)}'
 PWD = 'pw'
 # connect to db
