@@ -62,7 +62,7 @@ root_dir = os.path.dirname(os.path.abspath(__file__))
 sites = []
 parameters = []
 # read in the data file
-
+s
 """
 df = pd.read_csv(r'J:\Status and Trends\data\lab-results.csv')
 # select only surface water samples
@@ -93,10 +93,10 @@ flowindex_fname = os.path.join(os.pardir, r"data\FLOW",
 
 flowindex = pd.read_csv(flowindex_fname)
 # import all flow data to date
-flow_fname = os.path.join(os.pardir, r"data\FLOW",
-                          'flow_1929-10-01_2017-09-30.csv')
-flow = pd.read_csv(flow_fname, index_col=[0])
-flow.index = pd.to_datetime(flow.index)
+outflow_fname = os.path.join(os.pardir, r"data\FLOW",
+                             'flow_1929-10-01_2017-09-30.csv')
+outflow = pd.read_csv(outflow_fname, index_col=[0])
+outflow.index = pd.to_datetime(outflow.index)
 
 
 
@@ -106,30 +106,28 @@ cdfw_ftp_addr = 'ftp.dfg.ca.gov'
 # TODO: Convert counts to biomass using taxon specific weights
 # Read from ftp directly
 zoo_data_path = os.path.join(os.pardir, r"data\ZOO")
-# dfg_zoo_ftp_path = 'ftp://ftp.dfg.ca.gov/IEP_Zooplankton'
-# CBmatrix_path = os.path.join(dfg_zoo_ftp_path, '1972-2017CBMatrix.xlsx')
-# Smelt Larva Survey (CDFW): Longfin Smelt
+
+ftp_zoo_path = 'IEP_Zooplankton'
 cb_fname = '1972-2017CBMatrix.xlsx'
 CBmatrix_fname = os.path.join(zoo_data_path, cb_fname)
 if not os.path.isfile(CBmatrix_fname):
-    print('Fetching data file', CBmatrix_fname.split(os.sep)[-1], "from",
-          cdfw_ftp_addr)
-    get_ftp_file(cdfw_ftp_addr, 'IEP_Zooplankton', cb_fname,
+
+    get_ftp_file(cdfw_ftp_addr, ftp_zoo_path, cb_fname,
                  to_path=zoo_data_path)
 CBmatrix = pd.read_excel(CBmatrix_fname, sheet_name='CB CPUE Matrix 1972-2017')
 
-mysid_fname = '1972-2017MysidMatrix.xlsx'
+my_fname = '1972-2017MysidMatrix.xlsx'
+mysid_fname = os.path.join(zoo_data_path, my_fname)
 if not os.path.isfile(mysid_fname):
-    get_ftp_file(cdfw_ftp_addr, 'IEP_Zooplankton', mysid_fname,
+    get_ftp_file(cdfw_ftp_addr, ftp_zoo_path, my_fname,
                  to_path=zoo_data_path)
-Mysidmatrix_path = os.path.join(zoo_data_path, mysid_fname)
-Mysidmatrix = pd.read_excel(Mysidmatrix_path,
+Mysidmatrix = pd.read_excel(mysid_fname,
                             sheet_name='Mysid CPUE Matrix 1972-2017')
 
 pump_fname = '1972-2017PumpMatrix.xlsx'
 Pumpmatrix_fname = os.path.join(zoo_data_path, pump_fname)
 if not os.path.isfile(Pumpmatrix_fname):
-    get_ftp_file(cdfw_ftp_addr, 'IEP_Zooplankton', Pumpmatrix_fname,
+    get_ftp_file(cdfw_ftp_addr, ftp_zoo_path, pump_fname,
                  to_path=zoo_data_path)
 Pumpmatrix = pd.read_excel(Pumpmatrix_fname,
                            sheet_name='Pump CPUE Matrix 1972-2017')
@@ -164,16 +162,17 @@ if not os.path.isfile(djfmp_fname):
 data_path = os.path.join(os.pardir, r"data\FISH")
 cdfw_ftp_addr = 'ftp.dfg.ca.gov'
 # Smelt Larva Survey (CDFW): Longfin Smelt
+ftp_fish_path = 'Delta Smelt'
 sls_fname = 'SLS.mdb'
 sls_ds_path = os.path.join(data_path, sls_fname)
 if not os.path.isfile(sls_ds_path):
-    get_ftp_file(cdfw_ftp_addr, 'Delta Smelt', sls_fname, to_path=data_path)
+    get_ftp_file(cdfw_ftp_addr, ftp_fish_path, sls_fname, to_path=data_path)
 
 # Spring Kodiak
 # Careful and be prepared to wait bc SKT is a large file (~400 MB)!
 sls_ls_path = os.path.join(data_path, sls_fname)
 if ~os.path.isfile(sls_ls_path):
-    get_ftp_file(cdfw_ftp_addr, 'Delta Smelt', 'SKT.mdb', to_path=data_path)
+    get_ftp_file(cdfw_ftp_addr, ftp_fish_path, 'SKT.mdb', to_path=data_path)
 
 # Bay Study (CDFW): Longfin Smelt
 ls_smelt_fname_zip = 'Bay Study_FishCatchMatrices_1980-2017.zip'
