@@ -8,8 +8,11 @@ __pycache__/
 #Guidance docs
 guidance/
 # Data 
-data/
-*.xls*
+
+#Ignore data files 
+/data/*
+# except flow sub dir
+!/data/FLOW/
 
 # Distribution / packaging
 .Python
