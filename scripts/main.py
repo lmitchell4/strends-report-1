@@ -49,6 +49,7 @@ def extractzip(loc, outloc):
         from Reezoo Bose (stackoverflow)
        '''
         with zipfile.ZipFile(loc, "r") as zip_ref:
+            print("Unpacking",loc, "to", outloc, "...")
             # iterate over zip info list.
             for item in zip_ref.infolist():
                 zip_ref.extract(item, outloc)
@@ -62,7 +63,11 @@ root_dir = os.path.dirname(os.path.abspath(__file__))
 sites = []
 parameters = []
 # read in the data file
-s
+
+# TODO: split this main into several working scripts
+# 1) move data retrieval code to a separate script
+# 2) read data files and build sqlalchemy db
+# 3) etc
 """
 df = pd.read_csv(r'J:\Status and Trends\data\lab-results.csv')
 # select only surface water samples
@@ -104,37 +109,44 @@ outflow.index = pd.to_datetime(outflow.index)
 # Retrieve all ZOO files from an FTP (ftp://ftp.dfg.ca.gov/IEP_Zooplankton/)
 cdfw_ftp_addr = 'ftp.dfg.ca.gov'
 # TODO: Convert counts to biomass using taxon specific weights
-# Read from ftp directly
 zoo_data_path = os.path.join(os.pardir, r"data\ZOO")
-
+# Read from ftp directly
 ftp_zoo_path = 'IEP_Zooplankton'
 cb_fname = '1972-2017CBMatrix.xlsx'
 CBmatrix_fname = os.path.join(zoo_data_path, cb_fname)
 if not os.path.isfile(CBmatrix_fname):
-
     get_ftp_file(cdfw_ftp_addr, ftp_zoo_path, cb_fname,
                  to_path=zoo_data_path)
-CBmatrix = pd.read_excel(CBmatrix_fname, sheet_name='CB CPUE Matrix 1972-2017')
+else:
+    CBmatrix = pd.read_excel(CBmatrix_fname, sheet_name='CB CPUE Matrix 1972-2017')
 
 my_fname = '1972-2017MysidMatrix.xlsx'
 mysid_fname = os.path.join(zoo_data_path, my_fname)
 if not os.path.isfile(mysid_fname):
     get_ftp_file(cdfw_ftp_addr, ftp_zoo_path, my_fname,
                  to_path=zoo_data_path)
-Mysidmatrix = pd.read_excel(mysid_fname,
-                            sheet_name='Mysid CPUE Matrix 1972-2017')
+else:
+    Mysidmatrix = pd.read_excel(mysid_fname,
+                                sheet_name='Mysid CPUE Matrix 1972-2017')
 
 pump_fname = '1972-2017PumpMatrix.xlsx'
 Pumpmatrix_fname = os.path.join(zoo_data_path, pump_fname)
 if not os.path.isfile(Pumpmatrix_fname):
     get_ftp_file(cdfw_ftp_addr, ftp_zoo_path, pump_fname,
                  to_path=zoo_data_path)
-Pumpmatrix = pd.read_excel(Pumpmatrix_fname,
-                           sheet_name='Pump CPUE Matrix 1972-2017')
+else:
+    Pumpmatrix = pd.read_excel(Pumpmatrix_fname,
+                               sheet_name='Pump CPUE Matrix 1972-2017')
 
 # IMPORT PHYTO DATA
-emp_phyto_url = r'https://emp.baydeltalive.com/assets/06942155460a79991fdf1b57f641b1b4/text/csv/Phytoplankton_Algal_Type_Data_1975_-2016.csv'
-emp_phyto = pd.read_csv(emp_phyto_url)
+phyto_data_path = os.path.join(os.pardir, r"data\PHYTO")
+
+emp_phyto_fname = os.path.join(zoo_data_path, 'emp_phytoplankton.csv')
+if not os.path.isfile(Pumpmatrix_fname):
+    emp_phyto_url = r'https://emp.baydeltalive.com/assets/06942155460a79991fdf1b57f641b1b4/text/csv/Phytoplankton_Algal_Type_Data_1975_-2016.csv'
+    emp_phyto = pd.read_csv(emp_phyto_url)
+else:
+    emp_phyto = pd.read_csv(emp_phyto_fname)
 
 # IMPORT FISH DATA
 data_path = os.path.join(os.pardir, r"data\FISH")
@@ -147,7 +159,9 @@ if not os.path.isfile(ybp_salmon_fname):
     ybp_salmon = pd.read_csv(io.StringIO(ybp_edi.decode('utf-8')))
     # save the file locally
     ybp_salmon.to_csv(os.path.joinybp_salmon_fname)
-
+else:
+    ybp_salmon = pd.read_csv(ybp_salmon_fname)
+    
 # USFWS Delta Juvenile Fish Monitoring Program
 djfmp_fname = os.path.join(data_path, 'djfmp.csv')
 if not os.path.isfile(djfmp_fname):
@@ -156,7 +170,8 @@ if not os.path.isfile(djfmp_fname):
     djfmp = pd.read_csv(io.StringIO(djfmps_edi.decode('utf-8')))
     # save the file locally
     djfmp.to_csv(djfmp_fname)
-
+else:
+    djfmp = pd.read_csv(djfmp_fname)
 # move files from ftp to local space
 # TODO: ONLY COPY FILES IF AND ONLY IF THEY ARE UPDATED)
 data_path = os.path.join(os.pardir, r"data\FISH")
@@ -166,37 +181,40 @@ ftp_fish_path = 'Delta Smelt'
 sls_fname = 'SLS.mdb'
 sls_ds_path = os.path.join(data_path, sls_fname)
 if not os.path.isfile(sls_ds_path):
-    get_ftp_file(cdfw_ftp_addr, ftp_fish_path, sls_fname, to_path=data_path)
+    get_ftp_file(cdfw_ftp_addr, ftp_fish_path, sls_fname,
+                 to_path=data_path)
 
 # Spring Kodiak
 # Careful and be prepared to wait bc SKT is a large file (~400 MB)!
 sls_ls_path = os.path.join(data_path, sls_fname)
 if ~os.path.isfile(sls_ls_path):
-    get_ftp_file(cdfw_ftp_addr, ftp_fish_path, 'SKT.mdb', to_path=data_path)
+    get_ftp_file(cdfw_ftp_addr, ftp_fish_path, 'SKT.mdb',
+                 to_path=data_path)
 
 # Bay Study (CDFW): Longfin Smelt
 ls_smelt_fname_zip = 'Bay Study_FishCatchMatrices_1980-2017.zip'
 ls_zip_file = os.path.join(data_path, ls_smelt_fname_zip)
 if not os.path.isfile(ls_zip_file):
-    get_ftp_file(cdfw_ftp_addr, 'BayStudy/CatchMatrices', ls_smelt_fname_zip,
+    get_ftp_file(cdfw_ftp_addr, 'BayStudy/CatchMatrices',
+                 ls_smelt_fname_zip,
                  to_path=data_path)
 
-# unpack zip files
-if os.path.isfile(ls_zip_file):
+ls_smelt_path = os.path.join(data_path, 'BayStudy')
+ls_smelt_name = 'Bay Study_MWT_1980-2017_FishMatrix.xlsx'
+ls_smelt_fname = os.path.join(ls_smelt_path, ls_smelt_name)
+                 
+if not os.path.isfile(ls_smelt_fname):
+    # unpack zip files if necessary
     zip_ref = zipfile.ZipFile(ls_zip_file, 'r')
-    ls_smelt_path = os.path.join(data_path, 'BayStudy')
     zip_ref.extractall(path=ls_smelt_path)
     zip_ref.close()
 
-ls_smelt_fname = os.path.join(ls_smelt_path,
-                              'Bay Study_MWT_1980-2017_FishMatrix.xlsx')
 # read in data
 ls_smelt = pd.read_excel(ls_smelt_fname, sheet_name='MWT Catch Matrix')
 ls_smelt['Datetime'] = pd.to_datetime(ls_smelt['Date'])
 # create a multi-indexed dataframe based on date and station of smelt data
 ls_smelt.set_index(['Datetime', 'Station'], inplace=True)
-
-ls_smelt.iloc['DELSME', 'LONSME']
+#ls_smelt.iloc['DELSME', 'LONSME']
 
 # connect to CDFW access database files
 MDB = os.path.join(root_dir, r'data\fish\SLS.mdb')
