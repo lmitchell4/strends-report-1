@@ -17,7 +17,8 @@ class Salmon(Base):
     sex = Column(String)
     tagged = Column(Boolean)
     sample_date = Column(Date)
-    management_area_id = Column(Integer, ForeignKey('management_area.id'))
+    management_area_id = Column(Integer, ForeignKey('management_areas.id'))
+    management_area = relationship("ManagementArea", backref="salmon")
 
     def __init__(self, species_group, species, length, eggs, age, sex, tagged, sample_date):
       self.species_group = species_group

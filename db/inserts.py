@@ -59,10 +59,14 @@ print('connected to DB')
 # session.add(mark_stuntman)
 
 chinook_river = ManagementArea("Chinook River", 7298) # basic management area has a name and square mileage
+session.add(chinook_river)
+
 fish1 = Salmon("Salmon", "Chinook", 79, False, 16, "male", True, date(2016, 4, 2))
 fish1.management_area = chinook_river
 
-session.add(chinook_river)
+print(chinook_river)
+print(fish1)
+
 session.add(fish1)
 
 print('sessions finished, records added')
