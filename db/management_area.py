@@ -1,10 +1,13 @@
+# coding=utf-8
+
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
+
 from base import Base
 
 
 class ManagementArea(Base):
-    __tablename__ = 'management_areas'
+    __tablename__ = 'management_area'
     
     id = Column(Integer, primary_key=True)
     name = Column(String)
