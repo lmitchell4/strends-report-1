@@ -1,3 +1,5 @@
+# coding=utf-8
+
 from sqlalchemy import Boolean, Column, String, Integer, Date, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
@@ -15,7 +17,7 @@ class Salmon(Base):
     sex = Column(String)
     tagged = Column(Boolean)
     sample_date = Column(Date)
-    management_area = Column(Integer, ForeignKey('management_area.id'))
+    management_area_id = Column(Integer, ForeignKey('management_area.id'))
 
     def __init__(self, species_group, species, length, eggs, age, sex, tagged, sample_date):
       self.species_group = species_group

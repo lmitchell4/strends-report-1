@@ -4,7 +4,7 @@ from base import Base
 
 
 class ManagementArea(Base):
-    __tablename__ = 'management_area'
+    __tablename__ = 'management_areas'
     
     id = Column(Integer, primary_key=True)
     name = Column(String)
