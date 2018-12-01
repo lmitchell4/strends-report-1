@@ -15,17 +15,11 @@ print('connected to DB')
 
 chinook_river = ManagementArea("Chinook River", 7298) # basic management area has a name and square mileage
 session.add(chinook_river)
-upper_klamath = ManagementArea("Upper Klamath River", 3217) # basic management area has a name and square mileage
-session.add(upper_klamath)
 
 fish1 = Salmon("Salmon", "Chinook", 79, False, 16, "male", True, date(2016, 4, 2))
 fish1.management_area = chinook_river
 
-fish2 = Salmon("Salmon", "Sockeye", 88, True, 19, "female", True, date(2016, 5, 1))
-fish2.management_area = upper_klamath
-
 session.add(fish1)
-session.add(fish2)
 
 print('session finished, records added')
 
