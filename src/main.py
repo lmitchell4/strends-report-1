@@ -218,15 +218,18 @@ sls_db_fname = 'SLS.mdb'
 MDB = os.path.join(fish_path, sls_db_fname)
 DRV = '{Microsoft Access Driver (*.mdb, *.accdb)}'
 PWD = 'pw'
+SQL_DRIVERS = [pyodbc.drivers()[0],pyodbc.drivers()[1]]#,'{Microsoft Access Driver (*.mdb, *.accdb)}']
+SQL_DRIVERS = pyodbc.drivers()
 # connect to db
-con = pyodbc.connect('DRIVER={};DBQ={};PWD={}'.format(DRV, MDB, PWD))
-cur = con.cursor()
-
-# run a query and get the results
-SQL = 'SELECT * FROM Catch;'  # catch query
-rows = cur.execute(SQL).fetchall()
-cur.close()
-con.close()
+if next((s for s in SQL_DRIVERS if DRV in s), None):
+    con = pyodbc.connect('DRIVER={};DBQ={};PWD={}'.format(DRV, MDB, PWD))
+    cur = con.cursor()
+    
+    # run a query and get the results
+    SQL = 'SELECT * FROM Catch;'  # catch query
+    rows = cur.execute(SQL).fetchall()
+    cur.close()
+    con.close()
 
 # you could change the mode from 'w' to 'a' (append) for any subsequent queries
 #with open(sls_db_fname.replace('.mdb','.csv'), 'wb') as fou:
