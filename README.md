@@ -3,28 +3,34 @@ Seasonal based reporting of the status and trends of select IEP data
 
 ## Instructions
 
-### Installation
 
-(If running on local machine)
+#### Requirements
+
+* Python 3.6 or higher (preferably the Anaconda distribution)
+* Docker for Windows
+* MS Office
 
 #### Docker 
 
 * Install Docker for Windows following the instructions [here](https://docs.docker.com/docker-for-windows/install/)
 
-#### PostgreSQl
-
-* Install compatable [PostGreSQl](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads) `v 10.6`
-
 #### Python
 
-cd into directory
+* `cd strends-report`
+* `pip install requirements.txt`
+* `cd src`
 
-`pip install requirements.txt`
+
+#### Using pyodbc with python
+
+* Requires  Microsoft Office matching bit version of python  
 
 ### Usage
 
-3) Initialize a PostGreSQl Docker Container by running the shell script,  `db_int.sh`
+* Start a Docker Container that holds persistent storage of the PostfreSQL database by running the shell script,  `./create_strends_data.sh`
 
-4) Populate the database with new data by running the python script, `inserts.py`
+* Initialize a PostGreSQl server by starting a PostgreSQL Docker Container by running the shell script,  `./run_strends_psql.sh`
 
-5) Spin up the PostGreSQl database by running the shell script, `connect_db.sh` and view the data tables
+* Populate the database with new data using python. For example by running the python script, `inserts.py`
+
+* Query the PostGreSQl database server in python or R using 
