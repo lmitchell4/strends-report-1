@@ -79,4 +79,12 @@ ls_smelt['Datetime'] = pd.to_datetime(ls_smelt['Date'])
     else:
         Pumpmatrix = pd.read_excel(Pumpmatrix_fname,
                                    sheet_name='Pump CPUE Matrix 1972-2017')
+    #PHYTOPLANKTON
     
+    emp_phyto = pd.read_csv(emp_phyto_fname)
+    
+    djfmp_fname = os.path.join(fish_path, 'djfmp.csv')
+    djfmp = pd.read_csv(djfmp_fname)
+    ybp_salmon_fname = os.path.join(fish_path, 'ybp_salmon.csv')
+
+    ybp_salmon = pd.read_csv(ybp_salmon_fname)
