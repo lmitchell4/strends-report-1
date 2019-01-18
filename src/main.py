@@ -1,27 +1,47 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Jul 25 17:06:44 2018
-script to process some WDL data from the CNRA location
+script to run the status and trends data aggregation tool
 https://data.ca.gov/dataset/water-quality-data
 @author: jsaracen
 """
 import sys
+from fetch import fetch_data_files
+from read import read_data_files
+#from store import store_data_files
+from base import Session, engine, Base
+
+#TODO:1)read access database files, run this script form a bash file on a task
 
 
 def fetch_data():
-    pass
-def read_data():
-    pass
-def store_data():
-    pass
+    fetch_data_files()
+    
+def read_data(FILE_PATHS_FILENAME):
+    return read_data_files(FILE_PATHS_FILENAME)
+
+def store_data(data):
+    Base.metadata.create_all(engine)
+    for name, df in data.items():
+        try:
+            print('Storing {} to database'.format(name))
+            df.to_sql(name, engine, if_exists="replace")
+        except:
+            pass
+    return
+
 def query_data():
     pass
 
 def main():
     """main entry point for the script"""
-    pass
+    FILE_PATHS_FILENAME = "file_paths.json" 
 
-
+    fetch_data()
+    data = read_data(FILE_PATHS_FILENAME)
+    store_data(data)
+    
+    return
 
 if __name__ == "__main__":
     sys.exit(main())

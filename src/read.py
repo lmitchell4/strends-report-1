@@ -1,90 +1,127 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Dec 28 18:33:09 2018
-script to read data files into memory
+script to read data files into memory as pandas dataframes and push 
+to a postgresql db
 @author: jsaracen
 """
-
+import json
 import os
 import os.path
 import pandas as pd
 import pyodbc
-from fetch import fish_path, ls_smelt_fname
+
 
 # TODO: create a multi-indexed dataframe based on date and station of smelt data
 # ls_smelt.set_index(['Datetime', 'Station'], inplace=True)
 # ls_smelt.iloc['DELSME', 'LONSME']
 
-def read_flow_data(flow_csv_path):
+def read_flow_index(filename):
         # IMPORT FLOW
     # FLOW INDEX DATA
-    flow_path = os.path.join(os.pardir, r"data\FLOW")
-    flowindex_fname = os.path.join(flow_path, 'dayflowCalculations2017.csv')
-    flowindex = pd.read_csv(flowindex_fname)
+    #fname= 'dayflowCalculations2017.csv'
+#    flow_path = os.path.join(os.pardir, r"data\FLOW")
+#    flowindex_fname = os.path.join(flow_path, )
+    #filename = os.path.join(path, fname)
+    flow = pd.read_csv(filename)
+    return flow
     # import all flow data to date
-    outflow_fname = os.path.join(flow_path, 'flow_1929-10-01_2017-09-30.csv')
-    outflow = pd.read_csv(outflow_fname, index_col=[0])
-    outflow.index = pd.to_datetime(outflow.index)
+#    outflow_fname = os.path.join(flow_path, 'flow_1929-10-01_2017-09-30.csv')
+#    outflow = pd.read_csv(outflow_fname, index_col=[0])
+#    outflow.index = pd.to_datetime(outflow.index)
     
+def read_emp_water_quality(filename):
+    #path  = os.path.join(os.pardir, r"data\WQ")
+    #fname = os.path.join(path, '')
+    #filename = os.path.join(path, fname)
+    emp_wq = pd.read_excel(filename,)
+    return emp_wq
 
-# connect to CDFW access database files
-sls_db_fname = 'SLS.mdb'
-MDB = os.path.join(fish_path, sls_db_fname)
-DRV = '{Microsoft Access Driver (*.mdb, *.accdb)}'
-PWD = 'pw'
-SQL_DRIVERS = [pyodbc.drivers()[0],pyodbc.drivers()[1]]#,'{Microsoft Access Driver (*.mdb, *.accdb)}']
-SQL_DRIVERS = pyodbc.drivers()
-# connect to db
-if next((s for s in SQL_DRIVERS if DRV in s), None):
-    con = pyodbc.connect('DRIVER={};DBQ={};PWD={}'.format(DRV, MDB, PWD))
-    cur = con.cursor()
+def read_json_to_dict(json_file):
+    with open(json_file, 'r') as f:
+        json_dict = json.load(f)
+    return json_dict
+
+def query_access_db(PATH_TO_DB, SQL_QUERY):        
+    # connect to CDFW access database files
+    #PATH_TO_DB = SLS_LS_PATH
+    DRV = '{Microsoft Access Driver (*.mdb, *.accdb)}'
+    PWD = 'pw'
+    SQL_DRIVERS = pyodbc.drivers()
+    # connect to db
+    if next((s for s in SQL_DRIVERS if DRV in s), None):
+        con = pyodbc.connect('DRIVER={};DBQ={};PWD={}'.format(DRV, PATH_TO_DB, PWD))
+        cur = con.cursor()        
+        # run a query and get the results
+        #SQL_QUERY = 'SELECT * FROM Catch;'  # catch query
+        rows = cur.execute(SQL_QUERY).fetchall()
+        cur.close()
+        con.close()
+    return rows
+
+def read_data_files(FILE_PATHS_FILENAME):
+    print("Reading data files....")
+    datafile_paths = read_json_to_dict(FILE_PATHS_FILENAME)
+    # read paths to data files
+    FLOW_INDEX_PATH = datafile_paths.get("FLOW_INDEX_PATH")   
     
-    # run a query and get the results
-    SQL = 'SELECT * FROM Catch;'  # catch query
-    rows = cur.execute(SQL).fetchall()
-    cur.close()
-    con.close()
-
-# read in data
-ls_smelt = pd.read_excel(ls_smelt_fname, sheet_name='MWT Catch Matrix')
-
-ls_smelt['Datetime'] = pd.to_datetime(ls_smelt['Date'])
-
-
-  ftp_zoo_dir = 'IEP_Zooplankton'
-    cb_fname = '1972-2017CBMatrix.xlsx'
-    # copepod counts from tows
-    CBmatrix_fname = os.path.join(zoo_path, cb_fname)
-    if not os.path.isfile(CBmatrix_fname):
-        get_ftp_file(cdfw_ftp_addr, ftp_zoo_dir, cb_fname,
-                     to_path=zoo_path)
-    else:
-        CBmatrix = pd.read_excel(CBmatrix_fname,
-                                 sheet_name='CB CPUE Matrix 1972-2017')
-    # mysids counts from tow
-    my_fname = '1972-2017MysidMatrix.xlsx'
-    mysid_fname = os.path.join(zoo_path, my_fname)
-    if not os.path.isfile(mysid_fname):
-        get_ftp_file(cdfw_ftp_addr, ftp_zoo_dir, my_fname,
-                     to_path=zoo_path)
-    else:
-        Mysidmatrix = pd.read_excel(mysid_fname,
-                                    sheet_name='Mysid CPUE Matrix 1972-2017')
-    # mysids counts on the pump samples
-    pump_fname = '1972-2017PumpMatrix.xlsx'
-    Pumpmatrix_fname = os.path.join(zoo_path, pump_fname)
-    if not os.path.isfile(Pumpmatrix_fname):
-        get_ftp_file(cdfw_ftp_addr, ftp_zoo_dir, pump_fname,
-                     to_path=zoo_path)
-    else:
-        Pumpmatrix = pd.read_excel(Pumpmatrix_fname,
-                                   sheet_name='Pump CPUE Matrix 1972-2017')
+    YBP_SALMON_PATH = datafile_paths.get("YBP_SALMON_PATH")
+    DJFMP_PATH= datafile_paths.get("DJFMP_PATH")
+    LS_SMELT_PATH = datafile_paths.get("LS_SMELT_PATH")
+    
+    SKT_DS_PATH = datafile_paths.get("SKT_DS_PATH")
+    SLS_LS_PATH = datafile_paths.get("SLS_LS_PATH")
+    
+    EMP_PHYTO_PATH = datafile_paths.get("EMP_PHYTO_PATH")
+    FLOW_INDEX_PATH = datafile_paths.get("FLOW_INDEX_PATH")
+    WQ_FIELD_PATH = datafile_paths.get("WQ_FIELD_PATH")
+    WQ_LAB_PATH = datafile_paths.get("WQ_LAB_PATH")
+    WQ_WDL_PATH = datafile_paths.get("WQ_LAB_PATH")     
+    ZOOPLANKTON_MYSID_PATH = datafile_paths.get("ZOOPLANKTON_MYSID_PATH")
+    ZOOPLANKTON_CBMATRIX_PATH = datafile_paths.get("ZOOPLANKTON_CBMATRIX_PATH")
+    ZOOPLANKTON_PUMP_PATH = datafile_paths.get("ZOOPLANKTON_PUMP_PATH")
+    
+    # read data from files into pandas dataframes
+    #Flow
+    flow_index = pd.read_csv(FLOW_INDEX_PATH)
+    #WQ
+    emp_wq_lab = read_emp_water_quality(WQ_LAB_PATH)
+    emp_wq_field = read_emp_water_quality(WQ_FIELD_PATH)
+    #wdl_wq_lab = pd.read_csv(WQ_WDL_PATH)
+    
     #PHYTOPLANKTON
+    emp_phyto = pd.read_csv(EMP_PHYTO_PATH)  
     
-    emp_phyto = pd.read_csv(emp_phyto_fname)
-    
-    djfmp_fname = os.path.join(fish_path, 'djfmp.csv')
-    djfmp = pd.read_csv(djfmp_fname)
-    ybp_salmon_fname = os.path.join(fish_path, 'ybp_salmon.csv')
+    #ZOOPLANKTON
+    #copepod counts from tows
+    CBmatrix  = pd.read_excel(ZOOPLANKTON_CBMATRIX_PATH, sheet_name='CB CPUE Matrix 1972-2017')
+    # mysids counts from tow
+    Mysidmatrix = pd.read_excel(ZOOPLANKTON_MYSID_PATH, sheet_name='Mysid CPUE Matrix 1972-2017')    
+    Pumpmatrix = pd.read_excel(ZOOPLANKTON_PUMP_PATH, sheet_name='Pump CPUE Matrix 1972-2017')
 
-    ybp_salmon = pd.read_csv(ybp_salmon_fname)
+    #FISH
+    djfmp = pd.read_csv(DJFMP_PATH, low_memory=False)
+    ybp_salmon = pd.read_csv(YBP_SALMON_PATH, low_memory=False)
+    ls_smelt = pd.read_excel(LS_SMELT_PATH, sheet_name='MWT Catch Matrix')  
+    out_dict = {
+    "flow_index":flow_index, 
+    "emp_wq_lab":emp_wq_lab,
+    "emp_wq_field":emp_wq_field,
+    "emp_phyto":emp_phyto, 
+    "CBmatrix":CBmatrix, 
+    "Mysidmatrix":Mysidmatrix,
+    "Pumpmatrix":Pumpmatrix, 
+    "djfmp":djfmp,
+    "ybp_salmon":ybp_salmon, 
+    "ls_smelt":ls_smelt
+    }
+    return out_dict
+
+if __name__ == "__main__":
+    # load in the datafile paths datafilesjson file
+    FILE_PATHS_FILENAME = "file_paths.json" 
+  
+    data = read_data_files(FILE_PATHS_FILENAME)
+ 
+ 
+    

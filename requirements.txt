@@ -3,3 +3,4 @@ psycopg2==2.7.5
 pyodbc==4.0.24
 sqlalchemy==1.2.14
 xlrd==1.1.0
+openpyxl==2.5.12

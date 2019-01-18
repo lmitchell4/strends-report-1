@@ -18,6 +18,9 @@ guidance/
 
 # Data 
 
+/docs/*.xls
+/docs/*.xlsx
+
 
 
 #Ignore data files 

@@ -13,13 +13,36 @@ import os
 import os.path
 import pandas as pd
 import requests
+import sys
 import zipfile
 
 
-def get_urls_from_json_file(urls_file):
-    with open(urls_file) as f:
-        urls = json.load(f)
-    return urls
+
+def files_subdirs_in_root(path):
+    """
+    https://thomassileo.name/blog/2013/12/12/tracking-changes-in-directories-with-python/
+    """
+    files = []
+    subdirs = []
+    for root, dirs, filenames in os.walk(path):
+        for subdir in dirs:
+            subdirs.append(os.path.relpath(os.path.join(root, subdir), path))
+    
+        for f in filenames:
+            files.append(os.path.relpath(os.path.join(root, f), path))
+    return files, subdirs
+
+
+def read_json_to_dict(json_file):
+    with open(json_file, 'r') as f:
+        json_dict = json.load(f)
+    return json_dict
+
+def write_dict_to_json(sample_dict, json_file):
+    with open(json_file, 'w') as fp:
+        json.dump(sample_dict, fp)
+    fp.close()
+    return 
 
 
 def get_ftp_file(addr, ftp_path, fname, to_path="", verbose=False):
@@ -40,22 +63,26 @@ def get_ftp_file(addr, ftp_path, fname, to_path="", verbose=False):
     ftp.quit()
     return
 
-def get_zooplankton(CDFW_FTP_ADDR, ftp_zooplankton_dir, ZOO_DIR):
+def get_zooplankton(CDFW_FTP_ADDR, ftp_zooplankton_dir, ZOO_DIR, filenames):
     """ Funtion to pull ZOOPLANKTON workbooks from CDFW's FTP site"""
-    cb_fname = "1972-2017CBMatrix.xlsx"
+    
+    cb_fname = filenames.get('ZOOPLANKTON_CBMATRIX_FILENAME',
+                             "1972-2017CBMatrix.xlsx")
     # copepod counts from tows
     CBmatrix_fname = os.path.join(ZOO_DIR, cb_fname)
     if not os.path.isfile(CBmatrix_fname):
         get_ftp_file(CDFW_FTP_ADDR, ftp_zooplankton_dir, cb_fname,
                      to_path=ZOO_DIR)
     # mysids counts from tow
-    my_fname = "1972-2017MysidMatrix.xlsx"
+    my_fname = filenames.get('ZOOPLANKTON_MYSID_FILENAME',
+                             "1972-2017MysidMatrix.xlsx")
     mysid_fname = os.path.join(ZOO_DIR, my_fname)
     if not os.path.isfile(mysid_fname):
         get_ftp_file(CDFW_FTP_ADDR, ftp_zooplankton_dir, my_fname,
                      to_path=ZOO_DIR)
     # mysids counts on the pump samples
-    pump_fname = "1972-2017PumpMatrix.xlsx"
+    pump_fname = filenames.get('ZOOPLANKTON_PUMP_FILENAME',
+                               "1972-2017PumpMatrix.xlsx")
     Pumpmatrix_fname = os.path.join(ZOO_DIR, pump_fname)
     if not os.path.isfile(Pumpmatrix_fname):
         get_ftp_file(CDFW_FTP_ADDR, ftp_zooplankton_dir, pump_fname,
@@ -77,99 +104,156 @@ def extractzip(loc, outloc):
             zip_ref.close()
             return  # zip_files
 
-
-if __name__ == "__main__":
-    # get the root directory to set relative paths
-    ROOT_DIR = os.pardir
-    DATA_DIR = r"data"
+#TODO: Add try/except clauses
+def fetch_data_files():
+        ### SETUP DATA SOURCE LOCATIONS, DIRECTORIES, PATHS###
+    # get the root directory of this script to set relative paths
+    print("Fetching data...")
+    ROOT_DIR = os.pardir # root directory
+    DATA_DIR = r"data" #path to  data directory
+    FISH_DIR = os.path.join(ROOT_DIR, DATA_DIR, "FISH")
     ZOO_DIR = os.path.join(ROOT_DIR, DATA_DIR, "ZOO")
-    ftp_zooplankton_dir = "IEP_Zooplankton"
-        
-    data_portal_urls_file = "data_portal_urls.json"    
-    data_portal_urls = get_urls_from_json_file(data_portal_urls_file)
+    FLOW_DIR = os.path.join(ROOT_DIR, DATA_DIR, "FLOW")
+    WQ_DIR =  os.path.join(ROOT_DIR, DATA_DIR, "WQ") #must manually download WQ datasets
+    
+    FTP_ZOO_DIR = "IEP_Zooplankton" # the zooplankton drectory name on the cdfw ftp 
 
-    CDFW_FTP_ADDR = data_portal_urls["CDFW_FTP_ADDR"]   
+    data_portal_urls_file = "data_portal_urls.json"    
+    data_portal_urls = read_json_to_dict(data_portal_urls_file)
+    CDFW_FTP_ADDR = data_portal_urls.get("CDFW_FTP_ADDR", "ftp.dfg.ca.gov")
+
+    data_filenames_file = "data_filenames.json"    
+    data_filenames = read_json_to_dict(data_filenames_file)
     
+    #  FILE_PATHS_FILENAME = "file_paths.json" 
+
+    FLOW_INDEX_FILENAME = data_filenames.get('FLOW_INDEX_FILENAME')
+    FLOW_INDEX_PATH = os.path.join(FLOW_DIR, FLOW_INDEX_FILENAME)
     
+    WQ_LAB_FILENAME = data_filenames.get('WQ_LAB_FILENAME')
+    WQ_LAB_PATH = os.path.join(WQ_DIR, WQ_LAB_FILENAME)
+    
+    WQ_FIELD_FILENAME = data_filenames.get('WQ_FIELD_FILENAME')
+    WQ_FIELD_PATH = os.path.join(WQ_DIR,  WQ_FIELD_FILENAME)
+    
+    WDL_WQ = data_filenames.get('WDL_WQ')
+    WDL_WQ_PATH= os.path.join(WQ_DIR,  WDL_WQ)
+    
+    ZOOPLANKTON_CBMATRIX_PATH = os.path.join(ZOO_DIR, data_filenames.get('ZOOPLANKTON_CBMATRIX_FILENAME'))
+    ZOOPLANKTON_MYSID_PATH = os.path.join(ZOO_DIR, data_filenames.get('ZOOPLANKTON_MYSID_FILENAME'))
+    ZOOPLANKTON_PUMP_PATH = os.path.join(ZOO_DIR, data_filenames.get('ZOOPLANKTON_PUMP_FILENAME'))
+
     if not os.path.isdir(ZOO_DIR):
         os.mkdir(ZOO_DIR)
-    get_zooplankton(CDFW_FTP_ADDR, ftp_zooplankton_dir, ZOO_DIR) 
+    get_zooplankton(CDFW_FTP_ADDR, FTP_ZOO_DIR, ZOO_DIR, data_filenames) 
 
     # IMPORT EMP PHYTOPLANKTON DATA
-    phyto_data_path = os.path.join(ROOT_DIR, DATA_DIR, "PHYTO")
-    if not os.path.isdir(phyto_data_path):
-        os.mkdir(phyto_data_path)
-    emp_phyto_filename = "emp_phytoplankton.csv"
-    emp_phyto_path = os.path.join(phyto_data_path, emp_phyto_filename)
-    EMP_PHYTOPLANKTON_URL = data_portal_urls["EMP_PHYTOPLANKTON_URL"]
-    if not os.path.isfile(emp_phyto_path):
+    PHYTO_DIR= os.path.join(ROOT_DIR, DATA_DIR, "PHYTO")
+    if not os.path.isdir(PHYTO_DIR):
+        os.mkdir(PHYTO_DIR)
+    EMP_PHYTOPLANKTON_FILENAME = data_filenames.get("EMP_PHYTOPLANKTON_FILENAME",
+                                                    "emp_phytoplankton.csv")
+    EMP_PHYTO_PATH = os.path.join(PHYTO_DIR, EMP_PHYTOPLANKTON_FILENAME)
+    EMP_PHYTOPLANKTON_URL = data_portal_urls.get("EMP_PHYTOPLANKTON_URL")
+    if not os.path.isfile(EMP_PHYTO_PATH):        
         emp_phyto = pd.read_csv(EMP_PHYTOPLANKTON_URL)
-        emp_phyto.to_csv(emp_phyto_path)
+        emp_phyto.to_csv(EMP_PHYTO_PATH, index=False)
     # IMPORT FISH DATA
-    fish_path = os.path.join(ROOT_DIR, DATA_DIR, "FISH")
-    if not os.path.isdir(fish_path):
-        os.mkdir(fish_path) 
+    if not os.path.isdir(FISH_DIR):
+        os.mkdir(FISH_DIR) 
     # Retrieve data from the EDI data repos
     # YOLO BYP SALMON FISH
-    ybp_salmon_filename = "ybp_salmon.csv"    
-    ybp_salmon_path = os.path.join(fish_path, ybp_salmon_filename)
-    YOLO_BYPASS_FISH_MONITORING_PROGRAM_URL = data_portal_urls["YOLO_BYPASS_FISH_MONITORING_PROGRAM_URL"]
-    if not os.path.isfile(ybp_salmon_path):
+    YBP_SALMON_FILENAME = data_filenames.get("YBP_SALMON_FILENAME",
+                                             "ybp_salmon.csv") 
+    YBP_SALMON_PATH = os.path.join(FISH_DIR, YBP_SALMON_FILENAME)
+    YOLO_BYPASS_FISH_MONITORING_PROGRAM_URL = data_portal_urls.get("YOLO_BYPASS_FISH_MONITORING_PROGRAM_URL")
+    if not os.path.isfile(YBP_SALMON_PATH):
         ybp_edi = requests.get(YOLO_BYPASS_FISH_MONITORING_PROGRAM_URL).content
         ybp_salmon = pd.read_csv(io.StringIO(ybp_edi.decode("utf-8")))
         # save the file locally
-        ybp_salmon.to_csv(ybp_salmon_path)
+        ybp_salmon.to_csv(YBP_SALMON_PATH, index=False)
         
     # USFWS Delta Juvenile Fish Monitoring Program
-    djfmp_filename =  "djfmp.csv"
-    djfmp_path = os.path.join(fish_path, djfmp_filename)
-    DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL = data_portal_urls["DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL"]
+    DELTA_JUVENILE_FISH_MONITORING_PROGRAM_FILENAME = data_filenames.get("DELTA_JUVENILE_FISH_MONITORING_PROGRAM_FILENAME", "djfmp.csv")
+    DJFMP_PATH = os.path.join(FISH_DIR, DELTA_JUVENILE_FISH_MONITORING_PROGRAM_FILENAME)
+    DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL = data_portal_urls.get("DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL")
 
-    if not os.path.isfile(djfmp_path):
+    if not os.path.isfile(DJFMP_PATH):
         djfmps_edi = requests.get(DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL).content
         djfmp = pd.read_csv(io.StringIO(djfmps_edi.decode("utf-8")))
         # save the file locally
-        djfmp.to_csv(djfmp_path)
+        djfmp.to_csv(DJFMP_PATH, index=False)
 
     # move files from ftp to local space
     # TODO: ONLY COPY FILES IF AND ONLY IF THEY ARE UPDATED)
     # Smelt Larva Survey (CDFW): Longfin Smelt
-    FTP_DS_DIR = "Delta Smelt"
-    sls_filename = "SLS.mdb"
-    sls_ds_path = os.path.join(fish_path, sls_filename)
+    FTP_DS_DIR = "Delta Smelt"    
+    SLS_DS_FILENAME = data_filenames.get("SLS_FILENAME", "SLS.mdb")
+    SLS_DS_PATH = os.path.join(FISH_DIR, SLS_DS_FILENAME)
     
-    if not os.path.isfile(sls_ds_path):
-        get_ftp_file(CDFW_FTP_ADDR, FTP_DS_DIR, sls_filename,
-                     to_path=fish_path)
+    if not os.path.isfile(SLS_DS_PATH):
+        get_ftp_file(CDFW_FTP_ADDR, FTP_DS_DIR, SLS_DS_FILENAME,
+                     to_path=FISH_DIR)
     
     # Spring Kodiak
     # Careful and be prepared to wait bc SKT is a large file (~400 MB)!
-    skt_filename = "SKT.mdb"
-    sls_ls_path = os.path.join(fish_path, skt_filename)
-    if not os.path.isfile(sls_ls_path):
-        get_ftp_file(CDFW_FTP_ADDR, FTP_DS_DIR, skt_filename,
-                     to_path=fish_path)
+    SKT_FILENAME = data_filenames.get("SKT_FILENAME", "SKT.mdb")    
+    SKT_LS_PATH = os.path.join(FISH_DIR, SKT_FILENAME)
+    
+    if not os.path.isfile(SKT_LS_PATH):
+        get_ftp_file(CDFW_FTP_ADDR, FTP_DS_DIR, SKT_FILENAME,
+                     to_path=FISH_DIR)
     
     # Bay Study (CDFW): Longfin Smelt
     #FETCH THE DATA
-    ls_smelt_filename_zip = "Bay Study_FishCatchMatrices_1980-2017.zip"
-    ls_zip_file_path = os.path.join(fish_path, ls_smelt_filename_zip)
+    LS_SMELT_FILENAME_ZIP = data_portal_urls.get("LS_SMELT_FILENAME_ZIP",
+                                                 "Bay Study_FishCatchMatrices_1980-2017.zip")
+    LS_ZIP_FILE_PATH = os.path.join(FISH_DIR, LS_SMELT_FILENAME_ZIP)
     FTP_LS_DIR = "BayStudy/CatchMatrices"
-    if not os.path.isfile(ls_zip_file_path):
-        
+    if not os.path.isfile(LS_ZIP_FILE_PATH):        
         get_ftp_file(CDFW_FTP_ADDR, FTP_LS_DIR,
-                     ls_smelt_filename_zip,
-                     to_path=fish_path)
+                     LS_SMELT_FILENAME_ZIP,
+                     to_path=FISH_DIR)
     #UNZIP THE DATA
     BAYSTUDY_DIR = "BayStudy"
-    ls_smelt_dir = os.path.join(fish_path, BAYSTUDY_DIR)
-    if not os.path.isdir(ls_smelt_dir):
-        os.mkdir(ls_smelt_dir)
-    ls_smelt_filename = "Bay Study_MWT_1980-2017_FishMatrix.xlsx"
-    ls_smelt_path = os.path.join(ls_smelt_dir, ls_smelt_filename)
+    LS_SMELT_DIR = os.path.join(FISH_DIR, BAYSTUDY_DIR)
+    if not os.path.isdir(LS_SMELT_DIR):
+        os.mkdir(LS_SMELT_DIR)
+    LS_SMELT_FILENAME = data_portal_urls.get("LS_SMELT_FILENAME",
+                                             "Bay Study_MWT_1980-2017_FishMatrix.xlsx")
+    LS_SMELT_PATH = os.path.join(LS_SMELT_DIR, LS_SMELT_FILENAME)
                      
-    if not os.path.isfile(ls_smelt_path):
+    if not os.path.isfile(LS_SMELT_PATH):
         # unpack zip files if necessary
-        zip_ref = zipfile.ZipFile(ls_smelt_filename_zip, "r")
-        zip_ref.extractall(path=ls_smelt_path)
+        zip_ref = zipfile.ZipFile(LS_SMELT_FILENAME_ZIP, "r")
+        zip_ref.extractall(path=LS_SMELT_PATH)
         zip_ref.close()
+    
+    
+    FILE_PATHS_FILENAME = "file_paths.json" 
+    datafile_paths = {
+                      "LS_SMELT_PATH":LS_SMELT_PATH,
+                      "YBP_SALMON_PATH":YBP_SALMON_PATH,
+                      "SKT_LS_PATH":SKT_LS_PATH,  
+                      "SLS_DS_PATH":SLS_DS_PATH,
+                      "DJFMP_PATH":DJFMP_PATH,
+                      "EMP_PHYTO_PATH":EMP_PHYTO_PATH,
+                      "LS_ZIP_FILE_PATH":LS_ZIP_FILE_PATH,
+                      "FLOW_INDEX_PATH":FLOW_INDEX_PATH,
+                      "WQ_FIELD_PATH":WQ_FIELD_PATH,
+                      "WQ_LAB_PATH":WQ_LAB_PATH,
+                      "WDL_WQ_PATH":WDL_WQ_PATH,
+                      "ZOOPLANKTON_MYSID_PATH":ZOOPLANKTON_MYSID_PATH,
+                      "ZOOPLANKTON_CBMATRIX_PATH":ZOOPLANKTON_CBMATRIX_PATH,
+                      "ZOOPLANKTON_PUMP_PATH":ZOOPLANKTON_PUMP_PATH,
+                      }
+    
+    write_dict_to_json(datafile_paths, FILE_PATHS_FILENAME)
+
+def main():
+    """main entry point for the script"""
+    pass
+
+if __name__ == "__main__":
+    
+    sys.exit(main())

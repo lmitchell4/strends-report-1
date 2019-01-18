@@ -32,10 +32,12 @@ Seasonal based reporting of the status and trends of select IEP data
 
 ### Usage
 
+* Start the Docker Desktop 
+
 * Start a Docker Container that holds persistent storage of the PostfreSQL database by running the shell script,  `./create_strends_data.sh`.
 
 * Initialize a PostGreSQl server by starting a PostgreSQL Docker Container by running the shell script,  `./run_strends_psql.sh`.
 
 * Populate the database with new data using python. For example by running the python script, `inserts.py`.
 
-* Query the PostGreSQl database server in python or R using the `psycopg2` or `Rpostgres` pacakges, respectively.
+* Query the PostGreSQl database server in python or R using the `psycopg2` or `Rpostgres` packages, respectively.
