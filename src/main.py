@@ -22,6 +22,7 @@ def read_data(FILE_PATHS_FILENAME):
 
 def store_data(data):
     Base.metadata.create_all(engine)
+    print('Storing data...')
     for name, df in data.items():
         try:
             print('Storing {} to database'.format(name))
@@ -33,13 +34,14 @@ def store_data(data):
 def query_data():
     pass
 
-def main():
+def main(store=False):
     """main entry point for the script"""
     FILE_PATHS_FILENAME = "file_paths.json" 
 
     fetch_data()
     data = read_data(FILE_PATHS_FILENAME)
-    store_data(data)
+    if store:
+        store_data(data)
     
     return
 

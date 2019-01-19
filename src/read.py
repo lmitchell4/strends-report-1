@@ -83,7 +83,8 @@ def read_data_files(FILE_PATHS_FILENAME):
     
     # read data from files into pandas dataframes
     #Flow
-    flow_index = pd.read_csv(FLOW_INDEX_PATH)
+    flow_index = pd.read_csv(FLOW_INDEX_PATH, skipfooter=16, 
+                             engine='python')
     #WQ
     emp_wq_lab = read_emp_water_quality(WQ_LAB_PATH)
     emp_wq_field = read_emp_water_quality(WQ_FIELD_PATH)
