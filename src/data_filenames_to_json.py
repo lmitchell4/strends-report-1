@@ -21,7 +21,7 @@ def main():
     WDL_WQ = "lab-results.csv"
     WQ_LAB_FILENAME = "emp_lab_data.xlsx"
     WQ_FIELD_FILENAME = "emp_field_data.xlsx"
-    FLOW_INDEX_FILENAME = "dayflowCalculations2017.csv"
+    FLOW_INDEX_FILENAME = "dailyOutflow.csv"
     EMP_PHYTOPLANKTON_FILENAME = "emp_phytoplankton.csv"
     ZOOPLANKTON_CBMATRIX_FILENAME = "1972-2017CBMatrix.xlsx"
     ZOOPLANKTON_MYSID_FILENAME = "1972-2017MysidMatrix.xlsx"

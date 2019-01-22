@@ -17,18 +17,8 @@ import pyodbc
 # ls_smelt.iloc['DELSME', 'LONSME']
 
 def read_flow_index(filename):
-        # IMPORT FLOW
-    # FLOW INDEX DATA
-    #fname= 'dayflowCalculations2017.csv'
-#    flow_path = os.path.join(os.pardir, r"data\FLOW")
-#    flowindex_fname = os.path.join(flow_path, )
-    #filename = os.path.join(path, fname)
     flow = pd.read_csv(filename)
     return flow
-    # import all flow data to date
-#    outflow_fname = os.path.join(flow_path, 'flow_1929-10-01_2017-09-30.csv')
-#    outflow = pd.read_csv(outflow_fname, index_col=[0])
-#    outflow.index = pd.to_datetime(outflow.index)
     
 def read_emp_water_quality(filename):
     #path  = os.path.join(os.pardir, r"data\WQ")
@@ -63,36 +53,30 @@ def read_data_files(FILE_PATHS_FILENAME):
     print("Reading data files....")
     datafile_paths = read_json_to_dict(FILE_PATHS_FILENAME)
     # read paths to data files
-    FLOW_INDEX_PATH = datafile_paths.get("FLOW_INDEX_PATH")   
-    
-    YBP_SALMON_PATH = datafile_paths.get("YBP_SALMON_PATH")
-    DJFMP_PATH= datafile_paths.get("DJFMP_PATH")
-    LS_SMELT_PATH = datafile_paths.get("LS_SMELT_PATH")
-    
+    WQ_WDL_PATH = datafile_paths.get("WQ_WDL_PATH")     
     SKT_DS_PATH = datafile_paths.get("SKT_DS_PATH")
     SLS_LS_PATH = datafile_paths.get("SLS_LS_PATH")
-    
+    FLOW_INDEX_PATH = datafile_paths.get("FLOW_INDEX_PATH")    
+    YBP_SALMON_PATH = datafile_paths.get("YBP_SALMON_PATH")
+    DJFMP_PATH = datafile_paths.get("DJFMP_PATH")
+    LS_SMELT_PATH = datafile_paths.get("LS_SMELT_PATH")#this reads the xlsx not the .mdb
     EMP_PHYTO_PATH = datafile_paths.get("EMP_PHYTO_PATH")
     FLOW_INDEX_PATH = datafile_paths.get("FLOW_INDEX_PATH")
     WQ_FIELD_PATH = datafile_paths.get("WQ_FIELD_PATH")
     WQ_LAB_PATH = datafile_paths.get("WQ_LAB_PATH")
-    WQ_WDL_PATH = datafile_paths.get("WQ_LAB_PATH")     
     ZOOPLANKTON_MYSID_PATH = datafile_paths.get("ZOOPLANKTON_MYSID_PATH")
     ZOOPLANKTON_CBMATRIX_PATH = datafile_paths.get("ZOOPLANKTON_CBMATRIX_PATH")
     ZOOPLANKTON_PUMP_PATH = datafile_paths.get("ZOOPLANKTON_PUMP_PATH")
     
     # read data from files into pandas dataframes
     #Flow
-    flow_index = pd.read_csv(FLOW_INDEX_PATH, skipfooter=16, 
-                             engine='python')
+    flow_index = read_flow_index(FLOW_INDEX_PATH)
     #WQ
     emp_wq_lab = read_emp_water_quality(WQ_LAB_PATH)
     emp_wq_field = read_emp_water_quality(WQ_FIELD_PATH)
-    #wdl_wq_lab = pd.read_csv(WQ_WDL_PATH)
-    
+    #wdl_wq_lab = pd.read_csv(WQ_WDL_PATH)    
     #PHYTOPLANKTON
-    emp_phyto = pd.read_csv(EMP_PHYTO_PATH)  
-    
+    emp_phyto = pd.read_csv(EMP_PHYTO_PATH)      
     #ZOOPLANKTON
     #copepod counts from tows
     CBmatrix  = pd.read_excel(ZOOPLANKTON_CBMATRIX_PATH, sheet_name='CB CPUE Matrix 1972-2017')
@@ -103,7 +87,8 @@ def read_data_files(FILE_PATHS_FILENAME):
     #FISH
     djfmp = pd.read_csv(DJFMP_PATH, low_memory=False)
     ybp_salmon = pd.read_csv(YBP_SALMON_PATH, low_memory=False)
-    ls_smelt = pd.read_excel(LS_SMELT_PATH, sheet_name='MWT Catch Matrix')  
+    ls_smelt = pd.read_excel(LS_SMELT_PATH, sheet_name='MWT Catch Matrix')
+    
     out_dict = {
     "flow_index":flow_index, 
     "emp_wq_lab":emp_wq_lab,

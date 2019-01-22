@@ -26,7 +26,7 @@ def store_data(data):
     for name, df in data.items():
         try:
             print('Storing {} to database'.format(name))
-            df.to_sql(name, engine, if_exists="replace")
+            df.to_sql(name, engine, if_exists="append")
         except:
             pass
     return
