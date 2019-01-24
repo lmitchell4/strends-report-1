@@ -16,10 +16,11 @@ import sys
 import zipfile
 
 #from setup_paths import * #LS_SMELT_PATH, YBP_SALMON_PATH SKT_LS_PATH', 'SLS_DS_PATH', 'DJFMP_PATH', 'EMP_PHYTO_PATH', 'LS_ZIP_FILE_PATH', 'FLOW_INDEX_PATH', 'WQ_FIELD_PATH', 'WQ_LAB_PATH', 'WDL_WQ_PATH', 'ZOOPLANKTON_MYSID_PATH', 'ZOOPLANKTON_CBMATRIX_PATH', 'ZOOPLANKTON_PUMP_PATH'
-from setup_paths import FLOW_INDEX_FILENAME,EMP_PHYTOPLANKTON_FILENAME,ZOOPLANKTON_MYSID_FILENAME,ZOOPLANKTON_PUMP_FILENAME,ZOOPLANKTON_CBMATRIX_FILENAME
-from setup_paths import LS_SMELT_FILENAME, LS_SMELT_FILENAME_ZIP, SLS_FILENAME,SKT_FILENAME,YBP_SALMON_FILENAME,DELTA_JUVENILE_FISH_MONITORING_PROGRAM_FILENAME
-from setup_paths import WQ_LAB_FILENAME,WQ_FIELD_FILENAME,WDL_WQ
-from setup_paths import EMP_PHYTO_PATH,YBP_SALMON_PATH, DJFMP_PATH,SKT_LS_PATH,LS_SMELT_PATH,LS_ZIP_FILE_PATH,SLS_DS_PATH
+#from setup_paths import FLOW_INDEX_FILENAME,EMP_PHYTOPLANKTON_FILENAME,ZOOPLANKTON_MYSID_FILENAME,ZOOPLANKTON_PUMP_FILENAME,ZOOPLANKTON_CBMATRIX_FILENAME
+#from setup_paths import LS_SMELT_FILENAME, YBP_SALMON_FILENAME,DELTA_JUVENILE_FISH_MONITORING_PROGRAM_FILENAME
+#from setup_paths import WQ_LAB_FILENAME,WQ_FIELD_FILENAME,WDL_WQ
+from setup_paths import LS_SMELT_FILENAME_ZIP, SLS_FILENAME,SKT_FILENAME
+from setup_paths import EMP_PHYTO_PATH,YBP_SALMON_PATH, DJFMP_PATH,SKT_DS_PATH,LS_SMELT_PATH,LS_ZIP_FILE_PATH,SLS_LS_PATH
 from setup_paths import CDFW_FTP_ADDR, FTP_ZOO_DIR, ZOO_DIR,FISH_DIR,FTP_LS_DIR,FTP_DS_DIR
 from setup_paths import DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL,EMP_PHYTOPLANKTON_URL,YOLO_BYPASS_FISH_MONITORING_PROGRAM_URL
 from setup_paths import data_filenames
@@ -101,7 +102,8 @@ def extractzip(loc, outloc):
             return  # zip_files
 
 
-#TODO: Add try/except clauses
+#TODO: Add try/except clauses for each data fetching routines
+#TODO: Load the data isf the size and date is different than the local copy            
 def fetch_data_files():
         ### SETUP DATA SOURCE LOCATIONS, DIRECTORIES, PATHS###
     # get the root directory of this script to set relative paths
@@ -132,13 +134,13 @@ def fetch_data_files():
     # TODO: ONLY COPY FILES IF AND ONLY IF THEY ARE UPDATED)
     # Smelt Larva Survey (CDFW): Longfin Smelt
     
-    if not os.path.isfile(SLS_DS_PATH):
+    if not os.path.isfile(SLS_LS_PATH):
         get_ftp_file(CDFW_FTP_ADDR, FTP_DS_DIR, SLS_FILENAME,
                      to_path=FISH_DIR)
     # Spring Kodiak
     # Careful and be prepared to wait bc SKT is a large file (~400 MB)!
   
-    if not os.path.isfile(SKT_LS_PATH):
+    if not os.path.isfile(SKT_DS_PATH):
         get_ftp_file(CDFW_FTP_ADDR, FTP_DS_DIR, SKT_FILENAME,
                      to_path=FISH_DIR)
     # Bay Study (CDFW): Longfin Smelt
@@ -157,9 +159,8 @@ def fetch_data_files():
 
 def main():
     """main entry point for the script"""
-#    fetch_data_files()
-    pass
-
+    fetch_data_files()
+    return
 
 if __name__ == "__main__":
     

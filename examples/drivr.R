@@ -19,6 +19,8 @@ con <- dbConnect(RPostgres::Postgres(), dbname = "strends", host = "localhost",
           bigint = c("integer64", "integer", "numeric", "character"))
 # delte the pw from memory
 rm(pw)
+tablenames_filename = "tablenames.txt"
+tablenames = read.csv(tablenames_filename)
 # check for the flow_index table
 table_name = "flow_index"
 # construct a SQL query 

@@ -27,7 +27,9 @@ data_filenames = read_json_to_dict(data_filenames_file)
 
 #setup directories
 ROOT_DIR = os.pardir # root directory
+SOURCE_DIR = os.curdir
 DATA_DIR = r"data" #path to  data directory
+EXAMPLES_DIR = r"examples"
 FISH_DIR = os.path.join(ROOT_DIR, DATA_DIR, "FISH")
 ZOO_DIR = os.path.join(ROOT_DIR, DATA_DIR, "ZOO")
 FLOW_DIR = os.path.join(ROOT_DIR, DATA_DIR, "FLOW")
@@ -35,6 +37,13 @@ WQ_DIR =  os.path.join(ROOT_DIR, DATA_DIR, "WQ") #must manually download WQ data
 FTP_ZOO_DIR = "IEP_Zooplankton" # the zooplankton drectory name on the cdfw ftp 
 CDFW_FTP_ADDR = data_portal_urls.get("CDFW_FTP_ADDR", "ftp.dfg.ca.gov")
 FTP_DS_DIR = "Delta Smelt"  
+
+if not os.path.isdir(DATA_DIR):
+    os.mkdir(DATA_DIR)    
+    
+if not os.path.isdir(EXAMPLES_DIR):
+    os.mkdir(EXAMPLES_DIR)
+    
     #UNZIP THE DATA
 BAYSTUDY_DIR = "BayStudy"    
 FTP_LS_DIR = "BayStudy/CatchMatrices"
@@ -52,9 +61,11 @@ if not os.path.isdir(FISH_DIR):
 
 if not os.path.isdir(LS_SMELT_DIR):
     os.mkdir(LS_SMELT_DIR)    
-    
-    
-    
+     
+FILE_PATHS_FILENAME = "file_paths.json" 
+FILE_PATHS_PATH = os.path.join(ROOT_DIR, SOURCE_DIR, FILE_PATHS_FILENAME)
+TABLE_NAMES_FILENAME = 'tablenames.txt'
+TABLE_NAMES_PATH = os.path.join(ROOT_DIR, EXAMPLES_DIR, TABLE_NAMES_FILENAME)
 #read in the filenames and paths and set abs paths to files
 FLOW_INDEX_FILENAME = data_filenames.get('FLOW_INDEX_FILENAME')
 FLOW_INDEX_PATH = os.path.join(FLOW_DIR, FLOW_INDEX_FILENAME)
@@ -93,18 +104,18 @@ DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL = data_portal_urls.get("DELTA_JUVENIL
 
 
 SLS_FILENAME = data_filenames.get("SLS_FILENAME", "SLS.mdb")
-SLS_DS_PATH = os.path.join(FISH_DIR, SLS_FILENAME)
+SLS_LS_PATH = os.path.join(FISH_DIR, SLS_FILENAME)
 
 LS_SMELT_FILENAME_ZIP = data_portal_urls.get("LS_SMELT_FILENAME_ZIP",
                                              "Bay Study_FishCatchMatrices_1980-2017.zip")
 LS_ZIP_FILE_PATH = os.path.join(FISH_DIR, LS_SMELT_FILENAME_ZIP)
 
 LS_SMELT_FILENAME = data_portal_urls.get("LS_SMELT_FILENAME",
-                                             "Bay Study_MWT_1980-2017_FishMatrix.xlsx")
+                                         "Bay Study_MWT_1980-2017_FishMatrix.xlsx")
 LS_SMELT_PATH = os.path.join(LS_SMELT_DIR, LS_SMELT_FILENAME)
     
 SKT_FILENAME = data_filenames.get("SKT_FILENAME", "SKT.mdb")    
-SKT_LS_PATH = os.path.join(FISH_DIR, SKT_FILENAME)
+SKT_DS_PATH = os.path.join(FISH_DIR, SKT_FILENAME)
 
 
 
@@ -112,8 +123,8 @@ FILE_PATHS_FILENAME = "file_paths.json"
 datafile_paths = {
                   "LS_SMELT_PATH":LS_SMELT_PATH,
                   "YBP_SALMON_PATH":YBP_SALMON_PATH,
-                  "SKT_LS_PATH":SKT_LS_PATH,  
-                  "SLS_DS_PATH":SLS_DS_PATH,
+                  "SKT_DS_PATH":SKT_DS_PATH,  
+                  "SLS_LS_PATH":SLS_LS_PATH,
                   "DJFMP_PATH":DJFMP_PATH,
                   "EMP_PHYTO_PATH":EMP_PHYTO_PATH,
                   "LS_ZIP_FILE_PATH":LS_ZIP_FILE_PATH,
