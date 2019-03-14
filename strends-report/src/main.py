@@ -24,7 +24,8 @@ def read_data(FILE_PATHS_FILENAME):
 def store_data(data):
     Base.metadata.create_all(engine)
     print('Storing data...')
-    for name, df in data.items():        try:
+    for name, df in data.items():
+        try:
             print('Storing {} to database'.format(name))
             df.to_sql(name, engine, if_exists="append")
         except:

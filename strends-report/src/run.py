@@ -8,11 +8,11 @@ https://data.ca.gov/dataset/water-quality-data
 from fetch import fetch_data_files
 from read import read_data_files
 #from store import store_data_files
-from base import Session, engine, Base
+from base import engine
 
-#TODO:1) Run this script form a bash file on a task
+#TODO: Run this script form a bash file on a task
 #TODO: Add logging
-#TODO:2) Pass arfuments from command line using argparse
+#TODO: Pass arguments from command line using argparse
 
 
 def fetch_data():
@@ -22,9 +22,9 @@ def read_data(FILE_PATHS_FILENAME):
     return read_data_files(FILE_PATHS_FILENAME)
 
 def store_data(data):
-    Base.metadata.create_all(engine)
     print('Storing data...')
-    for name, df in data.items():        try:
+    for name, df in data.items():
+        try:
             print('Storing {} to database'.format(name))
             df.to_sql(name, engine, if_exists="append")
         except:
@@ -43,7 +43,7 @@ def main(store=False):
     if store:
         store_data(data)
     
-    return data
+    return
 
 if __name__ == "__main__":
-    data = main()
+    main()
