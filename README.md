@@ -12,13 +12,19 @@ Seasonal based reporting of the status and trends of select IEP data
 * Docker for Windows
 * Microsoft Access Database Engine which is available [here](https://www.microsoft.com/en-US/download/details.aspx?id=13255) with instructions [here](https://www.microsoft.com/en-US/download/details.aspx?id=13255)
 
-##### python packages
+##### python packages (for fetching data and populating the PostgresSQL database)
 
-* pandas
-* pyodbc
-* psycopg2
-* xlrd
+* `pandas`
+* `pyodbc`
+* `psycopg2`
+* `xlrd`
 
+##### R packages (for generating plots)
+
+* `DBI`
+* `RPostgres`
+* `ggplot2`
+* `lubridate`
 
 #### Docker 
 
@@ -29,15 +35,19 @@ Seasonal based reporting of the status and trends of select IEP data
 * `cd strends-report`
 * `pip install requirements.txt`
 * `cd src`
+* `python main.py`
+
 
 ### Usage
 
-* Start the Docker Desktop 
+* Start Docker Desktop, if not running on startup
 
-* Start a Docker Container that holds persistent storage of the PostfreSQL database by running the shell script,  `./create_strends_data.sh`.
+* Start a Docker Container that holds persistent storage of the PostgreSQL database by running the shell script,  `./create_strends_data.sh`.
 
-* Initialize a PostGreSQl server by starting a PostgreSQL Docker Container by running the shell script,  `./run_strends_psql.sh`.
+* Initialize a PostgreSQl server by starting a PostgreSQL Docker Container by running the shell script,  `./run_strends_psql.sh`.
 
-* Populate the database with new data using python. For example by running the python script, `inserts.py`.
+* Populate the database with new data using python. For example by running the python script, `main.py`.
 
-* Query the PostGreSQl database server in python or R using the `psycopg2` or `Rpostgres` packages, respectively.
+* Query the PostgreSQl database server in python or R using the `psycopg2` or `Rpostgres` packages, respectively.
+
+* You can connect to the database and generate plots in R by running `drivr.R` located in `\examples`
