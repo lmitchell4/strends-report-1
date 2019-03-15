@@ -38,18 +38,20 @@ FTP_ZOO_DIR = "IEP_Zooplankton" # the zooplankton drectory name on the cdfw ftp
 CDFW_FTP_ADDR = data_portal_urls.get("CDFW_FTP_ADDR", "ftp.dfg.ca.gov")
 FTP_DS_DIR = "Delta Smelt"  
 
-if not os.path.isdir(DATA_DIR):
-    os.mkdir(DATA_DIR)    
-    
-if not os.path.isdir(EXAMPLES_DIR):
-    os.mkdir(EXAMPLES_DIR)
-    
+
     #UNZIP THE DATA
 BAYSTUDY_DIR = "BayStudy"    
 FTP_LS_DIR = "BayStudy/CatchMatrices"
 LS_SMELT_DIR = os.path.join(FISH_DIR, BAYSTUDY_DIR)
 # IMPORT EMP PHYTOPLANKTON DATA
 PHYTO_DIR = os.path.join(ROOT_DIR, DATA_DIR, "PHYTO")
+
+if not os.path.isdir(DATA_DIR):
+    os.mkdir(DATA_DIR)    
+    
+if not os.path.isdir(EXAMPLES_DIR):
+    os.mkdir(EXAMPLES_DIR)
+    
 if not os.path.isdir(PHYTO_DIR):
     os.mkdir(PHYTO_DIR)
 

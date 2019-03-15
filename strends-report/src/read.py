@@ -6,6 +6,7 @@ script to read data files into memory as pandas dataframes and push
 to a postgresql db
 @author: jsaracen
 """
+#TODO: read all hardcoded file and sheet names from a file
 import json
 import pandas as pd
 import pyodbc
@@ -89,7 +90,7 @@ def read_data_files(FILE_PATHS_FILENAME):
     emp_phyto = pd.read_csv(EMP_PHYTO_PATH)      
     #ZOOPLANKTON
     #copepod counts from tows
-    CBmatrix  = pd.read_excel(ZOOPLANKTON_CBMATRIX_PATH, sheet_name="CB CPUE Matrix 1972-2017")
+    CBmatrix  = pd.read_excel(ZOOPLANKTON_CBMATRIX_PATH, sheet_name="CB CPUE Matrix 1972-2017") 
     # mysids counts from tow
     Mysidmatrix = pd.read_excel(ZOOPLANKTON_MYSID_PATH, sheet_name="Mysid CPUE Matrix 1972-2017")    
     Pumpmatrix = pd.read_excel(ZOOPLANKTON_PUMP_PATH, sheet_name="Pump CPUE Matrix 1972-2017")

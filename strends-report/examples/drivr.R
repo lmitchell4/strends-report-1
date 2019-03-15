@@ -17,14 +17,14 @@ pw <- {"pass"}
 con <- dbConnect(RPostgres::Postgres(), dbname = "strends", host = "localhost",
           port = 5432, password = pw, user = usr,
           bigint = c("integer64", "integer", "numeric", "character"))
-# delte the pw from memory
+# delete the pw from memory for security reasons
 rm(pw)
 tablenames_filename = "tablenames.txt"
 tablenames = read.csv(tablenames_filename)
 # check for the flow_index table
 table_name = "flow_index"
 # construct a SQL query 
-query_str =paste("SELECT * from", table_name)
+query_str = paste("SELECT * from", table_name)
 # query data and load into a daframe
 if(dbExistsTable(con, table_name)==TRUE){
   # query the data from postgreSQL 
