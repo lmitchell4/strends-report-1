@@ -42,7 +42,7 @@ def concat_emp_files(files_dir):
 #    csv_writer = csv.writer(fou)  # default field-delimiter is ","
 #    csv_writer.writerows(rows)
    # concatenate a bunch of individual files
-files_dir = r'C:\Users\jsaracen\Documents\Python Scripts\strends-report\data\WQ\baydeltalive'
+files_dir = r'\data\WQ\baydeltalive'
 concat_emp_files(files_dir)
 #field_files = list_of_files(files_dir, "Field*.xlsx")
 #lab_files =  list_of_files(files_dir, "Lab*.xlsx")

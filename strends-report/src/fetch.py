@@ -103,7 +103,7 @@ def extractzip(loc, outloc):
 
 
 #TODO: Add try/except clauses for each data fetching routines
-#TODO: Load the data isf the size and date is different than the local copy            
+#TODO: Only fetch the data if local copy is out of date with remote copy
 def fetch_data_files():
         ### SETUP DATA SOURCE LOCATIONS, DIRECTORIES, PATHS###
     # get the root directory of this script to set relative paths

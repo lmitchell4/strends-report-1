@@ -34,7 +34,7 @@ def store_data(data):
                 print('Couldn''t store  {} to database'.format(name))
                 pass
     except psycopg2.OperationalError:
-        print("Couldnt connect to database, make sure its runnign and try again")
+        print("Couldnt connect to database, make sure its running and try again")
     print ("Database updated with current data")
     return
 
