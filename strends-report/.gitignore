@@ -30,10 +30,8 @@ guidance/
 # except flow and emp sub dirs
 
 !/data/FLOW/
-!/data/WQ/emp*.xlsx
-
-
-
+!/data/WQ/*.xlsx
+#/data/WQ/**/baydeltalive/
 
 # Distribution / packaging
 
