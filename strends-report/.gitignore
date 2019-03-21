@@ -27,9 +27,11 @@ guidance/
 
 /data/*
 
-# except flow sub dir
+# except flow and emp sub dirs
 
 !/data/FLOW/
+!/data/WQ/emp*.xlsx
+
 
 
 
