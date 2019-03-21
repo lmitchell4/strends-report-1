@@ -30,7 +30,7 @@ guidance/
 # except flow sub dir
 
 !/data/FLOW/
-!/data/WQ/baydeltalive/
+!/data/WQ/
 
 # Distribution / packaging
 
