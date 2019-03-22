@@ -47,6 +47,17 @@ concat_emp_files(files_dir)
 #field_files = list_of_files(files_dir, "Field*.xlsx")
 #lab_files =  list_of_files(files_dir, "Lab*.xlsx")
 #pd.concat([pd.read_excel(f) for f in lab_files], axis=0).to_excel("emp_lab_data.xlsx", index=False)
+data = dict()
+
+
+keys=[]
+column_names = []
+for name, df in data.items():
+    column_names.append(df.columns.tolist())
+    keys.append(name.lower())
+columns = pd.DataFrame(index=keys, data=column_names).T
+columns.to_excel('columns.xlsx',index=False)
+
 
 
 #BEGIN BUILDING A POSTGRES DATABASE USING SQLAlchemy 

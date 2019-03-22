@@ -28,7 +28,7 @@ def store_data(data):
         print('Storing data...')        
         for name, df in data.items():
             try:
-                print('Storing {} to database'.format(name))
+                print('Storing {} to database'.format(name.lower()))
                 df.to_sql(name, engine, if_exists="append")
             except:
                 print('Couldn''t store  {} to database'.format(name))
@@ -52,4 +52,4 @@ def main(store=False):
     return data
 
 if __name__ == "__main__":
-    data = main()
+    data = main(store=False)

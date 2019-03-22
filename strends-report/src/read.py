@@ -61,7 +61,7 @@ def get_db_tables(PATH_TO_DB, TABLE_NAMES, SUFFIX='SKT'):
 
 
 def read_data_files(FILE_PATHS_FILENAME):
-    print("Reading data files....")
+    print("Reading data files...")
     datafile_paths = read_json_to_dict(FILE_PATHS_FILENAME)
     # read paths to data files
     #WQ_WDL_PATH = datafile_paths.get("WQ_WDL_PATH")

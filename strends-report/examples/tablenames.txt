@@ -2,24 +2,24 @@ flow_index
 emp_wq_lab
 emp_wq_field
 emp_phyto
-CBmatrix
-Mysidmatrix
-Pumpmatrix
+cbmatrix
+mysidmatrix
+pumpmatrix
 djfmp
 ybp_salmon
 ls_smelt
-SLS_Catch
-SLS_20mm Stations
-SLS_AreaCode1
-SLS_Lengths
-SLS_Meter Corrections
-SLS_Tow Info
-SLS_Water Info
-SLS_Wt_factors
-SKT_lktblStationsSKT
-SKT_tblCatch
-SKT_tblFishInfo
-SKT_tblOrganismCodes
-SKT_tblReproductiveStages
-SKT_tblSample
-SKT_tblSexLookUp
+sls_catch
+sls_20mm stations
+sls_areacode1
+sls_lengths
+sls_meter corrections
+sls_tow info
+sls_water info
+sls_wt_factors
+skt_lktblstationsskt
+skt_tblcatch
+skt_tblfishinfo
+skt_tblorganismcodes
+skt_tblreproductivestages
+skt_tblsample
+skt_tblsexlookup

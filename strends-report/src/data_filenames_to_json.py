@@ -51,7 +51,6 @@ def main():
 
     with open(OUTFILENAME, 'w') as fp:
         json.dump(filenames, fp)
-
     return
 
 
