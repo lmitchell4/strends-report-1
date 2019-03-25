@@ -2,36 +2,56 @@
 # and plot some data
 
 
-# check and install packages
-packages = c('DBI', 'RPostgres', 'ggplot2','lubridate')
+# check and install packages -This isnt nice so only check to see if they are there and
+# leave it to the user to install them 
+packages = c('ggplot2', 'lubridate', 'dplyr', 'dbplyr')
+
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
-    install.packages(package)
+#    install.packages(package)
     library(package, character.only=T)
   }
 }
 #setup db connection and connect
 usr = "usr"
+dbname = "strends"
 pw <- {"your_password"}
 pw <- {"pass"}
-con <- dbConnect(RPostgres::Postgres(), dbname = "strends", host = "localhost",
-          port = 5432, password = pw, user = usr,
-          bigint = c("integer64", "integer", "numeric", "character"))
+
+# query db using dplyr syntax
+# Connect to local PostgreSQL via dplyr
+con <- src_postgres(dbname = dbname,
+                        host = 'localhost',
+                        port = 5432,
+                        user = usr,
+                        password = pw)
 # delete the pw from memory for security reasons
 rm(pw)
+
 tablenames_filename = "tablenames.txt"
-tablenames = read.csv(tablenames_filename)
-# check for the flow_index table
-table_name = "flow_index"
-# construct a SQL query 
-query_str = paste("SELECT * from", table_name)
-# query data and load into a daframe
-if(dbExistsTable(con, table_name)==TRUE){
-  # query the data from postgreSQL 
-  df_postgres <- dbGetQuery(con,query_str )
-}
+tablenames = read.csv(tablenames_filename, header=FALSE,stringsAsFactors=FALSE)
+# define a table to query
+wqf_table_name = tablenames[3,"V1"]#"emp_wq_field"
+# query emp field water quality data as a tidy dataframe, ala https://dbplyr.tidyverse.org/
+wqf_datatbl = tbl(con, wqf_table_name) 
+#write a query to calculate the average of all water quality parameters at station d10
+station = "D10"
+summary = wqf_datatbl %>% 
+  filter(StationCode==station)  %>% 
+  group_by(AnalyteName) %>% 
+  summarise(Result = mean(Result, na.rm = TRUE)) %>% 
+  arrange(desc(AnalyteName))
+#print the query for QC
+summary %>% show_query()
+#retrieve the data as a tidy dataframe
+wqf_out = summary %>% collect()
+#now import a flow timeseries
+flow_table_name = tablenames[1,"V1"]#"flow_index"
+flow_datatbl = tbl(con, flow_table_name) #write the query
+flow_out = flow_datatbl %>% collect() #get the data tinto a tidy datafrae
+
 #convert the non standard date col to a date obj for plotting
-df_postgres$Datesimple  <-mdy(df_postgres$Date)
+flow_out$Datesimple  <-mdy(flow_out$Date)
 #plot the data
-p = ggplot(data=df_postgres, aes(x=Datesimple, y=as.numeric(OUT)))
+p = ggplot(data=flow_out, aes(x=Datesimple, y=as.numeric(OUT)))
 p + geom_line() + xlab("Date") + ylab("Daily Outflow (cfs)")
