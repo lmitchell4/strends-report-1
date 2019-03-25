@@ -8,6 +8,7 @@ to a postgresql db
 """
 #TODO: read all hardcoded file and sheet names from a file
 import json
+import os
 import pandas as pd
 import pyodbc
 
@@ -31,7 +32,22 @@ def write_table_names(fname, tablenames):
     with open(fname, 'w') as f:
         for item in tablenames:
             f.write("%s\n" % item)
-
+            
+def write_postgresql_table_names(data, cols_filename = 'columns.xlsx',
+                                 tables_filename='tablenames.txt'):
+    """data = dict()"""
+    keys=[]
+    column_names = []
+    for name, df in data.items():
+        column_names.append(df.columns.tolist())
+        keys.append(name.lower())
+    columns = pd.DataFrame(index=keys, data=column_names).T
+    columns.to_excel(os.path.join(os.pardir,'examples',cols_filename),
+                     index=False)
+    tablenames = pd.DataFrame(data=keys)
+    tablenames.to_csv(os.path.join(os.pardir,'examples',tables_filename),
+                      index=False,header=None)
+    return
 
 def get_db_tables(PATH_TO_DB, TABLE_NAMES, SUFFIX='SKT'):        
     # connect to CDFW access database files
@@ -134,12 +150,14 @@ def read_data_files(FILE_PATHS_FILENAME):
     #joing the dicts of datatables form the access databases to the out dict
     out_dict.update(SLS_LS_TABLES)
     out_dict.update(SKT_DS_TABLES)
-    return out_dict
+    out_data= {k.lower().replace(" ","_"): v for k, v in out_dict.items()}
+    return out_data
 
         
 if __name__ == "__main__":
     # load in the datafile paths datafiles json file  
     
     data = read_data_files(FILE_PATHS_PATH)
+    write_postgresql_table_names(data)
     write_table_names(TABLE_NAMES_PATH,
                       data.keys()) # for querying data with ext hardware

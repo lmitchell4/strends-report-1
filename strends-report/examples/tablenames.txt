@@ -9,12 +9,12 @@ djfmp
 ybp_salmon
 ls_smelt
 sls_catch
-sls_20mm stations
+sls_20mm_stations
 sls_areacode1
 sls_lengths
-sls_meter corrections
-sls_tow info
-sls_water info
+sls_meter_corrections
+sls_tow_info
+sls_water_info
 sls_wt_factors
 skt_lktblstationsskt
 skt_tblcatch

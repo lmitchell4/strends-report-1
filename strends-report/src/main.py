@@ -6,7 +6,9 @@ https://data.ca.gov/dataset/water-quality-data
 @author: jsaracen
 """
 from fetch import fetch_data_files
-from read import read_data_files
+from read import read_data_files, write_postgresql_table_names
+import os
+import pickle
 #from store import store_data_files
 from base import engine, Base
 import psycopg2
@@ -26,15 +28,17 @@ def store_data(data):
     try:        
         Base.metadata.create_all(engine)
         print('Storing data...')        
-        for name, df in data.items():
+        for table_name, df in data.items():
             try:
-                print('Storing {} to database'.format(name.lower()))
-                df.to_sql(name, engine, if_exists="append")
+                print('Storing {} to database'.format(table_name.lower()))
+                #TODO: Easy but slow so speed this up!
+                df.to_sql(table_name, engine, if_exists="replace",
+                          chunksize=1000)
             except:
-                print('Couldn''t store  {} to database'.format(name))
-                pass
+                print('Could not store {} to database, check database connection {} and try again'.format(table_name.lower()), engine)
+                
     except psycopg2.OperationalError:
-        print("Couldnt connect to database, make sure its running and try again")
+        print("Couldn''t connect to database, make sure its running and try again")
     print ("Database updated with current data")
     return
 
@@ -47,9 +51,20 @@ def main(store=False):
     FILE_PATHS_FILENAME = "file_paths.json" 
     fetch_data()
     data = read_data(FILE_PATHS_FILENAME)
+    
     if store:
+        write_postgresql_table_names(data)
         store_data(data)    
     return data
 
 if __name__ == "__main__":
-    data = main(store=False)
+    data = main(store=True)
+    #save it to a pickle for later viewing
+    PICKLED_DATA_PATH = os.path.join(os.pardir, 'results', 'data.pickle')
+    with open(PICKLED_DATA_PATH, 'wb') as handle:
+        pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    #load it to a pickle for later viewing
+
+    with open(PICKLED_DATA_PATH, 'rb') as handle:
+        b = pickle.load(handle)
+    
