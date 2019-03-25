@@ -8,9 +8,9 @@ Seasonal based reporting of the status and trends of select IEP data
 
 ##### Software
 
-* Python 3.6 or higher (preferably the Anaconda distribution)
-* Docker for Windows
-* Microsoft Access Database Engine which is available [here](https://www.microsoft.com/en-US/download/details.aspx?id=13255) with instructions [here](https://www.microsoft.com/en-US/download/details.aspx?id=13255)
+* [Anaconda Python 3.6+ distribution](https://www.anaconda.com/distribution/) 
+* [Docker for Windows](https://docs.docker.com/docker-for-windows/install/)
+* [Microsoft Access Database Engine](https://www.microsoft.com/en-US/download/details.aspx?id=13255) with instructions [here](https://www.microsoft.com/en-US/download/details.aspx?id=13255)
 
 ##### python packages (for fetching data and populating the PostgresSQL database)
 
@@ -32,7 +32,7 @@ Seasonal based reporting of the status and trends of select IEP data
 
 #### Python
 
-Run the following commands at the Anaconda prompt
+To install python using Anaconda run the following commands at the Anaconda prompt
 
 1. Create the environment from the `environment.yml` file:
 
@@ -48,11 +48,11 @@ Run the following commands at the Anaconda prompt
 
 2. Start a Docker Container that holds persistent storage of the PostgreSQL database by running the shell script:
 	
-	`./create_strends_data.sh`.
+	`.$ /create_strends_data.sh`.
 
 3. Initialize a PostgreSQl server by starting a PostgreSQL Docker Container by running the shell script:
 	
-	`./run_strends_psql.sh`.
+	`$ ./run_strends_psql.sh`.
 
 4. Populate the database with new data using python. For example by running the python script, `main.py`.
 
@@ -66,8 +66,8 @@ Run the following commands at the Anaconda prompt
 
 * Stop all docker containers:
 
-	`docker container stop $(docker container ls -aq)`
+	`$ docker container stop $(docker container ls -aq)`
 
 * Remove all docker containers:
 
-	`docker container rm $(docker container ls -aq)`
+	`$ docker container rm $(docker container ls -aq)`
