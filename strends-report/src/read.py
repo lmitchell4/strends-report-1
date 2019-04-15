@@ -22,6 +22,13 @@ def read_emp_water_quality(filename):
     emp_wq = pd.read_excel(filename)
     return emp_wq
 
+def read_emp_water_quality_wdl(filename):
+    """The file is actually a tab delimited file, depsite being 
+    downloaded as an excel xls file"""    
+    emp_wq =  pd.read_csv(filename, delimiter='\t',
+                          encoding='unicode_escape')
+    return emp_wq
+
 def read_json_to_dict(json_file):
     with open(json_file, "r") as f:
         json_dict = json.load(f)
@@ -38,14 +45,15 @@ def write_postgresql_table_names(data, cols_filename = 'columns.xlsx',
     """data = dict()"""
     keys=[]
     column_names = []
+    dest_path = os.path.join(os.pardir,'examples')
     for name, df in data.items():
         column_names.append(df.columns.tolist())
         keys.append(name.lower())
     columns = pd.DataFrame(index=keys, data=column_names).T
-    columns.to_excel(os.path.join(os.pardir,'examples',cols_filename),
+    columns.to_excel(os.path.join(dest_path, cols_filename),
                      index=False)
     tablenames = pd.DataFrame(data=keys)
-    tablenames.to_csv(os.path.join(os.pardir,'examples',tables_filename),
+    tablenames.to_csv(os.path.join(dest_path, tables_filename),
                       index=False,header=None)
     return
 
@@ -73,7 +81,7 @@ def get_db_tables(PATH_TO_DB, TABLE_NAMES, SUFFIX='SKT'):
             SQL_QUERY = "SELECT * FROM {};".format(TABLE_NAME)  # catch query
             dataframes.append(pd.read_sql(SQL_QUERY, CONXN))
         CONXN.close()
-        return dict(zip(TABLE_NAMES_APPENDED,dataframes))
+        return dict(zip(TABLE_NAMES_APPENDED, dataframes))
 
 
 def read_data_files(FILE_PATHS_FILENAME):
@@ -161,3 +169,4 @@ if __name__ == "__main__":
     write_postgresql_table_names(data)
     write_table_names(TABLE_NAMES_PATH,
                       data.keys()) # for querying data with ext hardware
+    

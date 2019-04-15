@@ -9,62 +9,107 @@ from fetch import fetch_data_files
 from read import read_data_files, write_postgresql_table_names
 import os
 import pickle
-#from store import store_data_files
-from base import engine, Base
-import psycopg2
+from base import engine
+import io
+import numpy as np
+import sqlalchemy
 #TODO:* Create database schema
-#TODO:* Speed up writing dataframes to database 
 #TODO:* Add logging
 #TODO:* Pass arguments from command line using argparse
 #TODO:* Run this script from a bash file on a task
 
 def fetch_data():
     fetch_data_files()
-    
+
+
 def read_data(FILE_PATHS_FILENAME):
     return read_data_files(FILE_PATHS_FILENAME)
 
-def store_data(data):
-    try:        
-        Base.metadata.create_all(engine)
-        print('Storing data...')        
-        for table_name, df in data.items():
-            try:
-                print('Storing {} to database'.format(table_name.lower()))
-                #TODO: Easy but slow so speed this up!
-                df.to_sql(table_name, engine, if_exists="replace",
-                          chunksize=1000)
-            except:
-                print('Could not store {} to database, check database connection {} and try again'.format(table_name.lower()), engine)
-                
-    except psycopg2.OperationalError:
-        print("Couldn''t connect to database, make sure its running and try again")
-    print ("Database updated with current data")
+
+def df_str_cleanup(df):
+    for col in df.columns: #To replace all line breaks in all textual columns b/c they return DataError  when loading 
+        if df[col].dtype == np.object_:
+            df[col] = df[col].str.replace('\n','');
+            df[col] = df[col].str.replace('\r','');
+    return df
+
+
+def to_postgresql(engine, df, table_name, if_exists='replace', sep='\t', encoding='utf8'):
+    connection = None
+    cursor = None
+    # Create Table
+    df[:0].to_sql(table_name, engine, if_exists=if_exists)
+    try:
+        df = df_str_cleanup(df)
+    except (Exception, AttributeError) as error: # Workaround on table "ls_smelt": Repeat the string replace process to deal with a strange AttributeError
+        print(error)
+        df = df_str_cleanup(df)
+    # Prepare data
+    output = io.StringIO()
+    df.to_csv(output, sep=sep, header=False, encoding=encoding)
+    output.seek(0)
+    # Insert data
+    connection = engine.raw_connection()
+    try:
+        cursor = connection.cursor()
+        cursor.copy_from(output, table_name, sep=sep, null='')
+        connection.commit()
+        print("DB successfully updated ")
+    except (Exception, sqlalchemy.exc.SQLAlchemyError) as error:
+        print(error)
+        print("Rolling back connection")
+        connection.rollback()
+        raise
+    finally:  
+        if connection is not None:
+            connection.close() 
     return
 
-def query_data():
-    """query data for plotting"""
-    pass
+
+def store_data(data):
+    try:        
+        print('Storing data...')
+        for table_name, df in data.items():
+            try:   
+                print("Writing table {}".format(table_name))
+                to_postgresql(engine, df, table_name)
+            except sqlalchemy.exc.SQLAlchemyError :#catch a specific error  message 
+                print('Could not store {} to database, check database connection {} and try again'.format(table_name.lower(),engine), engine)
+              
+    except (Exception, sqlalchemy.exc.OperationalError) as error: 
+
+        print("Couldn''t connect to database, make sure its running and try again")#update message to match corresponding error
+        print(error)
+    except (Exception, sqlalchemy.exc.SQLAlchemyError) as error:
+        print("There was an unknown generic sqlalchemy error")
+        print(error)
+    finally:
+        print ("Database updated with current data")
+    return
+
 
 def main(store=False):
     """main entry point for the script"""
     FILE_PATHS_FILENAME = "file_paths.json" 
     fetch_data()
-    data = read_data(FILE_PATHS_FILENAME)
-    
+    data = read_data(FILE_PATHS_FILENAME)    
     if store:
         write_postgresql_table_names(data)
         store_data(data)    
     return data
 
 if __name__ == "__main__":
-    data = main(store=True)
-    #save it to a pickle for later viewing
-    PICKLED_DATA_PATH = os.path.join(os.pardir, 'results', 'data.pickle')
-    with open(PICKLED_DATA_PATH, 'wb') as handle:
-        pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    #load it to a pickle for later viewing
-
-    with open(PICKLED_DATA_PATH, 'rb') as handle:
-        b = pickle.load(handle)
-    
+    #read the raw data and optionally store to the db
+    store2db = True
+    data = main(store=store2db)
+    if store2db == False:
+        #save it to a pickle for later viewing instead of writing to the db
+        PICKLED_DATA_PATH = os.path.join(os.pardir, 'results', 'data.pickle')
+        with open(PICKLED_DATA_PATH, 'wb') as handle:
+            pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        #load it to a pickle for later viewing
+#        PICKLED_DATA_PATH = os.path.join(os.pardir, 'results', 'data.pickle')
+#
+#        
+#        with open(PICKLED_DATA_PATH, 'rb') as handle:
+#            data = pickle.load(handle)
