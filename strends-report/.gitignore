@@ -28,8 +28,8 @@ $*.xls
 /docs/*.xls
 /docs/*.xlsx
 
-
-
+# login credentials and settings
+*database.ini
 #Ignore data files 
 
 /data/*
