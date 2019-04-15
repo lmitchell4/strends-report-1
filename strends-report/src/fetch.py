@@ -9,7 +9,7 @@ script to fetch data from various repositories
 from ftplib import FTP
 import io
 import os
-import os.path
+from pathlib import Path
 import pandas as pd
 import requests
 import sys
@@ -67,21 +67,24 @@ def get_zooplankton(CDFW_FTP_ADDR, ftp_zooplankton_dir, ZOO_DIR, filenames):
                              "1972-2017CBMatrix.xlsx")
     # copepod counts from tows
     CBmatrix_fname = os.path.join(ZOO_DIR, cb_fname)
-    if not os.path.isfile(CBmatrix_fname):
+    fileconfig = Path(CBmatrix_fname)
+    if not fileconfig.is_file():
         get_ftp_file(CDFW_FTP_ADDR, ftp_zooplankton_dir, cb_fname,
                      to_path=ZOO_DIR)
     # mysids counts from tow
     my_fname = filenames.get('ZOOPLANKTON_MYSID_FILENAME',
                              "1972-2017MysidMatrix.xlsx")
     mysid_fname = os.path.join(ZOO_DIR, my_fname)
-    if not os.path.isfile(mysid_fname):
+    fileconfig = Path(mysid_fname)
+    if not fileconfig.is_file():
         get_ftp_file(CDFW_FTP_ADDR, ftp_zooplankton_dir, my_fname,
                      to_path=ZOO_DIR)
     # mysids counts on the pump samples
     pump_fname = filenames.get('ZOOPLANKTON_PUMP_FILENAME',
                                "1972-2017PumpMatrix.xlsx")
     Pumpmatrix_fname = os.path.join(ZOO_DIR, pump_fname)
-    if not os.path.isfile(Pumpmatrix_fname):
+    fileconfig = Path(Pumpmatrix_fname)
+    if not fileconfig.is_file():
         get_ftp_file(CDFW_FTP_ADDR, ftp_zooplankton_dir, pump_fname,
                      to_path=ZOO_DIR)
 
@@ -108,23 +111,25 @@ def fetch_data_files():
         ### SETUP DATA SOURCE LOCATIONS, DIRECTORIES, PATHS###
     # get the root directory of this script to set relative paths
     print("Fetching data...")
-
+    
     get_zooplankton(CDFW_FTP_ADDR, FTP_ZOO_DIR, ZOO_DIR, data_filenames) 
 
-    if not os.path.isfile(EMP_PHYTO_PATH):        
+    if not Path(EMP_PHYTO_PATH).is_file():        
         emp_phyto = pd.read_csv(EMP_PHYTOPLANKTON_URL)
         emp_phyto.to_csv(EMP_PHYTO_PATH, index=False)
     # IMPORT FISH DATA
     # Retrieve data from the EDI data repos
     # YOLO BYP SALMON FISH
-    if not os.path.isfile(YBP_SALMON_PATH):
+    fileconfig = Path(YBP_SALMON_PATH)
+    if not fileconfig.is_file():
         ybp_edi = requests.get(YOLO_BYPASS_FISH_MONITORING_PROGRAM_URL).content
         ybp_salmon = pd.read_csv(io.StringIO(ybp_edi.decode("utf-8")))
         # save the file locally
         ybp_salmon.to_csv(YBP_SALMON_PATH, index=False)
         
     # USFWS Delta Juvenile Fish Monitoring Program
-    if not os.path.isfile(DJFMP_PATH):
+    fileconfig = Path(DJFMP_PATH)
+    if not fileconfig.is_file():
         djfmps_edi = requests.get(DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL).content
         djfmp = pd.read_csv(io.StringIO(djfmps_edi.decode("utf-8")))
         # save the file locally
@@ -133,24 +138,25 @@ def fetch_data_files():
     # move files from ftp to local space
     # TODO: ONLY COPY FILES IF AND ONLY IF THEY ARE UPDATED)
     # Smelt Larva Survey (CDFW): Longfin Smelt
-    
-    if not os.path.isfile(SLS_LS_PATH):
+    fileconfig = Path(SLS_LS_PATH)
+    if not fileconfig.is_file():
         get_ftp_file(CDFW_FTP_ADDR, FTP_DS_DIR, SLS_FILENAME,
                      to_path=FISH_DIR)
     # Spring Kodiak
     # Careful and be prepared to wait bc SKT is a large file (~400 MB)!
-  
-    if not os.path.isfile(SKT_DS_PATH):
+    fileconfig = Path(SKT_DS_PATH)
+    if not fileconfig.is_file():
         get_ftp_file(CDFW_FTP_ADDR, FTP_DS_DIR, SKT_FILENAME,
                      to_path=FISH_DIR)
     # Bay Study (CDFW): Longfin Smelt
     #FETCH THE DATA
-    if not os.path.isfile(LS_ZIP_FILE_PATH):        
+    fileconfig =  Path(LS_ZIP_FILE_PATH)
+    if not fileconfig.is_file():        
         get_ftp_file(CDFW_FTP_ADDR, FTP_LS_DIR,
                      LS_SMELT_FILENAME_ZIP,
                      to_path=FISH_DIR)
-                    
-    if not os.path.isfile(LS_SMELT_PATH):
+    fileconfig = Path(LS_SMELT_PATH)             
+    if not fileconfig.is_file():
         # unpack zip files if necessary
         zip_ref = zipfile.ZipFile(LS_SMELT_FILENAME_ZIP, "r")
         zip_ref.extractall(path=LS_SMELT_PATH)
