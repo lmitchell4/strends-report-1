@@ -113,8 +113,8 @@ def fetch_data_files():
     print("Fetching data...")
     
     get_zooplankton(CDFW_FTP_ADDR, FTP_ZOO_DIR, ZOO_DIR, data_filenames) 
-
-    if not Path(EMP_PHYTO_PATH).is_file():        
+    fileconfig = Path(EMP_PHYTO_PATH)
+    if not fileconfig.is_file():
         emp_phyto = pd.read_csv(EMP_PHYTOPLANKTON_URL)
         emp_phyto.to_csv(EMP_PHYTO_PATH, index=False)
     # IMPORT FISH DATA
