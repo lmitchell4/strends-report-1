@@ -6,8 +6,15 @@ from sqlalchemy.orm import sessionmaker
 from config import config
 
 
-# load config and credentials
+# load config and credentials from ini file
 engine_args = config('sqlalchemy_database.ini')
+#file should return the following
+engine_args = {'db_type': 'postgresql',
+               'host': 'localhost',
+               'database': 'DBNAME',
+               'user': 'USERNAME',
+               'password': 'PASSWORD',
+               'port': '5432'}
 # build connection string load
 connection_string = "{db_type}://{user}:{password}@{host}:{port}/{database}".format(**engine_args)
 engine = create_engine(connection_string )

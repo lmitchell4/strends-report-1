@@ -3,6 +3,15 @@
 Created on Fri Apr  5 12:27:33 2019
 
 @author: jsaracen
+.ini file stores credentials and looks like this:
+
+[postgresql]
+host=localhost
+database=DBNAME
+user=USER
+password=PASSWORD
+port=5432
+
 """
 
 from configparser import ConfigParser
