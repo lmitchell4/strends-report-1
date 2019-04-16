@@ -16,8 +16,7 @@ Seasonal based reporting of the status and trends of select IEP data
 
 * `pandas`
 * `pyodbc`
-* `psycopg2`
-* `turbodbc`
+* `sqlalchemy`
 * `xlrd`
 
 ##### R packages (for querying data and generating plots)
@@ -118,11 +117,10 @@ To install python using Anaconda run the following commands at the Anaconda prom
 * Remove all docker containers:
 
 	`docker container rm $(docker container ls -aq)`
+	
+* More docker commands:
 
 	```
-	docker build -t friendlyhello .  # Create image using this directory's Dockerfile
-	docker run -p 4000:80 friendlyhello  # Run "friendlyname" mapping port 4000 to 80
-	docker run -d -p 4000:80 friendlyhello         # Same thing, but in detached mode
 	docker container ls                                # List all running containers
 	docker container ls -a             # List all containers, even those not running
 	docker container stop <hash>           # Gracefully stop the specified container
