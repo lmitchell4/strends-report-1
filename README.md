@@ -12,12 +12,19 @@ Seasonal based reporting of the status and trends of select IEP data
 * [Docker for Windows](https://docs.docker.com/docker-for-windows/install/)
 * [Microsoft Access Database Engine](https://www.microsoft.com/en-US/download/details.aspx?id=13255) with instructions [here](https://www.microsoft.com/en-US/download/details.aspx?id=13255)
 * [PostgreSQL ODBC Database Drivers](https://ftp.postgresql.org/pub/odbc/versions/msi/psqlodbc_11_00_0000-x64.zip)
-##### python packages (for fetching data and populating the PostgresSQL database)
+
+##### python 
+
+* Create a system environmental variable `REQUESTS_CA_BUNDLE` and set the path to your Departments MITM certificate (example: `ca-bundle.crt`)
+
+#### packages (for fetching data and populating the PostgresSQL database)
 
 * `pandas`
 * `pyodbc`
 * `sqlalchemy`
 * `xlrd`
+
+
 
 ##### R packages (for querying data and generating plots)
 
