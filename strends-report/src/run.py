@@ -9,8 +9,8 @@ from fetch import fetch_data_files
 from read import read_data_files
 #from store import store_data_files
 from base import engine
+from setup_paths import FILE_PATHS_PATH
 
-#TODO: Run this script form a bash file on a task
 #TODO: Add logging
 #TODO: Pass arguments from command line using argparse
 
@@ -36,7 +36,7 @@ def query_data():
 
 def main(store=False):
     """main entry point for the script"""
-    FILE_PATHS_FILENAME = "file_paths.json" 
+   # FILE_PATHS_FILENAME = "file_paths.json" 
 
     fetch_data()
     data = read_data(FILE_PATHS_FILENAME)

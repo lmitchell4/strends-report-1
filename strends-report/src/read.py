@@ -59,13 +59,6 @@ def write_postgresql_table_names(data, cols_filename = 'columns.xlsx',
 
 def get_db_tables(PATH_TO_DB, TABLE_NAMES, SUFFIX='SKT'):        
     # connect to CDFW access database files
-    #PATH_TO_DB = SLS_LS_PATH
-#    FILE_PATHS_FILENAME = "file_paths.json" 
-#    datafile_paths = read_json_to_dict(FILE_PATHS_FILENAME)
-#    SLS_LS_PATH = datafile_paths.get("SLS_LS_PATH")
-#    PATH_TO_DB=SLS_LS_PATH
-#    #PATH_TO_DB =r"\data\FISH\SLS.mdb"
-#    TABLE_NAME = "Catch"
     DRV = "Microsoft Access Driver (*.mdb, *.accdb)"
     PWD = "pw"
     SQL_DRIVERS = pyodbc.drivers()

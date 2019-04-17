@@ -37,6 +37,10 @@ data_portal_urls = read_json_to_dict(data_portal_urls_file)
 data_filenames_file = os.path.join(SOURCE_DIR, CONFIG_DIR, "data_filenames.json")
 data_filenames = read_json_to_dict(data_filenames_file)
 
+FILE_PATHS_FILENAME = "file_paths.json" 
+FILE_PATHS_PATH = os.path.join(SOURCE_DIR, CONFIG_DIR, FILE_PATHS_FILENAME)
+TABLE_NAMES_FILENAME = 'tablenames.txt'
+TABLE_NAMES_PATH = os.path.join(ROOT_DIR, EXAMPLES_DIR, TABLE_NAMES_FILENAME)
 #setup directories
 
 FISH_DIR = os.path.join(DATA_PATH, "FISH")
@@ -71,11 +75,7 @@ if not os.path.isdir(FISH_DIR):
 
 if not os.path.isdir(LS_SMELT_DIR):
     os.mkdir(LS_SMELT_DIR)    
-     
-FILE_PATHS_FILENAME = "file_paths.json" 
-FILE_PATHS_PATH = os.path.join(SOURCE_DIR, CONFIG_DIR, FILE_PATHS_FILENAME)
-TABLE_NAMES_FILENAME = 'tablenames.txt'
-TABLE_NAMES_PATH = os.path.join(SOURCE_DIR, CONFIG_DIR, TABLE_NAMES_FILENAME)
+
 #read in the filenames and paths and set abs paths to files
 FLOW_INDEX_FILENAME = data_filenames.get('FLOW_INDEX_FILENAME')
 FLOW_INDEX_PATH = os.path.join(FLOW_DIR, FLOW_INDEX_FILENAME)
@@ -146,4 +146,4 @@ datafile_paths = {
                   "ZOOPLANKTON_PUMP_PATH":ZOOPLANKTON_PUMP_PATH,
                   }
 
-write_dict_to_json(datafile_paths, FILE_PATHS_FILENAME)
+write_dict_to_json(datafile_paths, FILE_PATHS_PATH)
