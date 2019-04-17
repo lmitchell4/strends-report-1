@@ -7,6 +7,7 @@ script to fetch data from various repositories
 
 
 from ftplib import FTP
+import ftplib
 import io
 import os
 from pathlib import Path
@@ -14,14 +15,13 @@ import pandas as pd
 import requests
 import sys
 import zipfile
-
 #from setup_paths import * #LS_SMELT_PATH, YBP_SALMON_PATH SKT_LS_PATH', 'SLS_DS_PATH', 'DJFMP_PATH', 'EMP_PHYTO_PATH', 'LS_ZIP_FILE_PATH', 'FLOW_INDEX_PATH', 'WQ_FIELD_PATH', 'WQ_LAB_PATH', 'WDL_WQ_PATH', 'ZOOPLANKTON_MYSID_PATH', 'ZOOPLANKTON_CBMATRIX_PATH', 'ZOOPLANKTON_PUMP_PATH'
 #from setup_paths import FLOW_INDEX_FILENAME,EMP_PHYTOPLANKTON_FILENAME,ZOOPLANKTON_MYSID_FILENAME,ZOOPLANKTON_PUMP_FILENAME,ZOOPLANKTON_CBMATRIX_FILENAME
 #from setup_paths import LS_SMELT_FILENAME, YBP_SALMON_FILENAME,DELTA_JUVENILE_FISH_MONITORING_PROGRAM_FILENAME
 #from setup_paths import WQ_LAB_FILENAME,WQ_FIELD_FILENAME,WDL_WQ
 from setup_paths import LS_SMELT_FILENAME_ZIP, SLS_FILENAME,SKT_FILENAME
 from setup_paths import EMP_PHYTO_PATH,YBP_SALMON_PATH, DJFMP_PATH,SKT_DS_PATH,LS_SMELT_PATH,LS_ZIP_FILE_PATH,SLS_LS_PATH
-from setup_paths import CDFW_FTP_ADDR, FTP_ZOO_DIR, ZOO_DIR,FISH_DIR,FTP_LS_DIR,FTP_DS_DIR
+from setup_paths import CDFW_FTP_ADDR, FTP_ZOO_DIR, ZOO_DIR,FISH_DIR,FTP_LS_DIR,FTP_DS_DIR,LS_SMELT_DIR
 from setup_paths import DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL,EMP_PHYTOPLANKTON_URL,YOLO_BYPASS_FISH_MONITORING_PROGRAM_URL
 from setup_paths import data_filenames
 
@@ -40,24 +40,41 @@ def files_subdirs_in_root(path):
             files.append(os.path.relpath(os.path.join(root, f), path))
     return files, subdirs
 
+def data_pull_message(fileconfig):
+    print('No local copy of {}, so I am now downloading it...'.format(fileconfig.absolute(),))
+    return
 
-def get_ftp_file(addr, ftp_path, fname, to_path="", verbose=False):
+def get_ftp_file(addr, ftp_path, fname, to_path="", verbose=True):
     """ Function to grab a file, fname, from an ftp specified by addr
     at the given path and put in the local directory"""
-    ftp = FTP(addr)
-    ftp.login()
-    if verbose:
-        print("Welcome: ", ftp.getwelcome())
-        ftp.retrlines("LIST")
-    ftp.cwd(ftp_path)
-    local_filename = os.path.join(to_path,  fname)
-    filedata = open(local_filename, "wb")
-    ftp.retrbinary("RETR " + fname, filedata.write)
-    if verbose:
-        print("Retrieving file:", fname)
-    filedata.close()
-    ftp.quit()
-    return
+    try:
+        ftp = FTP(addr)
+        if verbose:
+            ftp.set_debuglevel(1)
+        ftp.login()
+        if verbose:
+            print("Welcome: ", ftp.getwelcome())
+            ftp.retrlines("LIST")
+        ftp.cwd(ftp_path)
+        local_filename = os.path.join(to_path,  fname)
+        filedata = open(local_filename, "wb")
+        #get the size fo the file
+        filesize = ftp.size(fname)
+        #TODO: add conditional to only get the file if the size on server 
+        # is greater than the size of the local copy, which is passed in
+        #retrieve the file
+        ftp.retrbinary("RETR " + fname, filedata.write)
+        if verbose:
+            print("Retrieving file:", fname)
+        filedata.close()
+        ftp.quit()
+    except ftplib.all_errors as error:
+        print("ftplib error: {0}".format(error))
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+    else:
+        return filesize
+    return 
 
 
 def get_zooplankton(CDFW_FTP_ADDR, ftp_zooplankton_dir, ZOO_DIR, filenames):
@@ -69,6 +86,7 @@ def get_zooplankton(CDFW_FTP_ADDR, ftp_zooplankton_dir, ZOO_DIR, filenames):
     CBmatrix_fname = os.path.join(ZOO_DIR, cb_fname)
     fileconfig = Path(CBmatrix_fname)
     if not fileconfig.is_file():
+        data_pull_message(fileconfig)
         get_ftp_file(CDFW_FTP_ADDR, ftp_zooplankton_dir, cb_fname,
                      to_path=ZOO_DIR)
     # mysids counts from tow
@@ -77,6 +95,7 @@ def get_zooplankton(CDFW_FTP_ADDR, ftp_zooplankton_dir, ZOO_DIR, filenames):
     mysid_fname = os.path.join(ZOO_DIR, my_fname)
     fileconfig = Path(mysid_fname)
     if not fileconfig.is_file():
+        data_pull_message(fileconfig)
         get_ftp_file(CDFW_FTP_ADDR, ftp_zooplankton_dir, my_fname,
                      to_path=ZOO_DIR)
     # mysids counts on the pump samples
@@ -85,6 +104,7 @@ def get_zooplankton(CDFW_FTP_ADDR, ftp_zooplankton_dir, ZOO_DIR, filenames):
     Pumpmatrix_fname = os.path.join(ZOO_DIR, pump_fname)
     fileconfig = Path(Pumpmatrix_fname)
     if not fileconfig.is_file():
+        data_pull_message(fileconfig)
         get_ftp_file(CDFW_FTP_ADDR, ftp_zooplankton_dir, pump_fname,
                      to_path=ZOO_DIR)
 
@@ -96,11 +116,10 @@ def extractzip(loc, outloc):
         from Reezoo Bose (stackoverflow)
        """
         with zipfile.ZipFile(loc, "r") as zip_ref:
-            print("Unpacking",loc, "to", outloc, "...")
+            print("Unpacking", loc, "to", outloc, "...")
             # iterate over zip info list.
             for item in zip_ref.infolist():
                 zip_ref.extract(item, outloc)
-
             zip_ref.close()
             return  # zip_files
 
@@ -111,26 +130,41 @@ def fetch_data_files():
         ### SETUP DATA SOURCE LOCATIONS, DIRECTORIES, PATHS###
     # get the root directory of this script to set relative paths
     print("Fetching data...")
+    path_to_certs = os.environ['REQUESTS_CA_BUNDLE']
+
+    get_zooplankton(CDFW_FTP_ADDR, FTP_ZOO_DIR, ZOO_DIR, data_filenames)
     
-    get_zooplankton(CDFW_FTP_ADDR, FTP_ZOO_DIR, ZOO_DIR, data_filenames) 
     fileconfig = Path(EMP_PHYTO_PATH)
     if not fileconfig.is_file():
+        print('No local copy of {}, so I''m downloading it...'.format(fileconfig.absolute(),))
+
         emp_phyto = pd.read_csv(EMP_PHYTOPLANKTON_URL)
         emp_phyto.to_csv(EMP_PHYTO_PATH, index=False)
     # IMPORT FISH DATA
     # Retrieve data from the EDI data repos
     # YOLO BYP SALMON FISH
+    
     fileconfig = Path(YBP_SALMON_PATH)
+  #  YOLO_BYPASS_FISH_MONITORING_PROGRAM_URL= r'https://portal.edirepository.org/nis/dataviewer?packageid=edi.233.2&entityid=015e494911cf35c90089ced5a3127334'
     if not fileconfig.is_file():
-        ybp_edi = requests.get(YOLO_BYPASS_FISH_MONITORING_PROGRAM_URL).content
-        ybp_salmon = pd.read_csv(io.StringIO(ybp_edi.decode("utf-8")))
-        # save the file locally
-        ybp_salmon.to_csv(YBP_SALMON_PATH, index=False)
-        
+        data_pull_message(fileconfig)
+        try:
+            ybp_edi = requests.get(YOLO_BYPASS_FISH_MONITORING_PROGRAM_URL,
+                                   verify=path_to_certs).content
+            ybp_salmon = pd.read_csv(io.StringIO(ybp_edi.decode("utf-8")))
+        except:
+            ybp_salmon = pd.DataFrame()
+        finally:
+            # save the file locally
+            ybp_salmon.to_csv(YBP_SALMON_PATH, index=False)
+            
     # USFWS Delta Juvenile Fish Monitoring Program
     fileconfig = Path(DJFMP_PATH)
+    
     if not fileconfig.is_file():
-        djfmps_edi = requests.get(DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL).content
+        data_pull_message(fileconfig)
+        djfmps_edi = requests.get(DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL,
+                                  verify=path_to_certs).content
         djfmp = pd.read_csv(io.StringIO(djfmps_edi.decode("utf-8")))
         # save the file locally
         djfmp.to_csv(DJFMP_PATH, index=False)
@@ -140,26 +174,30 @@ def fetch_data_files():
     # Smelt Larva Survey (CDFW): Longfin Smelt
     fileconfig = Path(SLS_LS_PATH)
     if not fileconfig.is_file():
+        data_pull_message(fileconfig)
         get_ftp_file(CDFW_FTP_ADDR, FTP_DS_DIR, SLS_FILENAME,
                      to_path=FISH_DIR)
     # Spring Kodiak
     # Careful and be prepared to wait bc SKT is a large file (~400 MB)!
     fileconfig = Path(SKT_DS_PATH)
     if not fileconfig.is_file():
+        data_pull_message(fileconfig)
         get_ftp_file(CDFW_FTP_ADDR, FTP_DS_DIR, SKT_FILENAME,
                      to_path=FISH_DIR)
     # Bay Study (CDFW): Longfin Smelt
     #FETCH THE DATA
     fileconfig =  Path(LS_ZIP_FILE_PATH)
     if not fileconfig.is_file():        
+        data_pull_message(fileconfig)
         get_ftp_file(CDFW_FTP_ADDR, FTP_LS_DIR,
                      LS_SMELT_FILENAME_ZIP,
                      to_path=FISH_DIR)
     fileconfig = Path(LS_SMELT_PATH)             
     if not fileconfig.is_file():
+        print("Unzipping {}".format(LS_SMELT_PATH))
         # unpack zip files if necessary
-        zip_ref = zipfile.ZipFile(LS_SMELT_FILENAME_ZIP, "r")
-        zip_ref.extractall(path=LS_SMELT_PATH)
+        zip_ref = zipfile.ZipFile(LS_ZIP_FILE_PATH, "r")
+        zip_ref.extractall(path=LS_SMELT_DIR)
         zip_ref.close()
 
 

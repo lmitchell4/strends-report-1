@@ -100,13 +100,13 @@ def main(store=False):
 
 if __name__ == "__main__":
     #read the raw data and optionally store to the db
-    store2db = True
-    data = main(store=store2db)
-    if store2db == False:
+    store = True
+    data = main(store=store)
+  #  if store2db == False:
         #save it to a pickle for later viewing instead of writing to the db
-        PICKLED_DATA_PATH = os.path.join(os.pardir, 'results', 'data.pickle')
-        with open(PICKLED_DATA_PATH, 'wb') as handle:
-            pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    PICKLED_DATA_PATH = os.path.join(os.pardir, 'results', 'data.pickle')
+    with open(PICKLED_DATA_PATH, 'wb') as handle:
+        pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
         #load it to a pickle for later viewing
 #        PICKLED_DATA_PATH = os.path.join(os.pardir, 'results', 'data.pickle')
 #

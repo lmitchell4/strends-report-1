@@ -7,11 +7,15 @@ script to write a json file of data file names
 
 import json
 import sys
+import os
+from pathlib import Path
 
-#TODO:make json output pretty
 
 def main():
-    OUTFILENAME = 'data_filenames.json'
+    SOURCE_DIR = str(Path().resolve()) #os.curdir
+    CONFIG_DIR = r"config"
+#TODO:make json output pretty
+    OUTFILENAME = os.path.join(SOURCE_DIR, CONFIG_DIR,  'data_filenames.json')
 #    DATA_ROOT = "data"
 #    FLOW_DIR = "FLOW"    
 #    FTP_ZOOPLANKTON_DIR = "IEP_Zooplankton"

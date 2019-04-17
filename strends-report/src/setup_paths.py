@@ -8,49 +8,57 @@ INPUT:
 
 import json
 import os
+from pathlib import Path
+
 
 def read_json_to_dict(json_file):
     with open(json_file, 'r') as f:
         json_dict = json.load(f)
     return json_dict
 
+
 def write_dict_to_json(sample_dict, json_file):
     with open(json_file, 'w') as fp:
         json.dump(sample_dict, fp)
     fp.close()
-    return 
+    return
 
-data_portal_urls_file = "data_portal_urls.json"    
+
+#use Path.resolve for abs paths
+ROOT_DIR = str(Path().resolve().parent) #os.pardir # root directory
+SOURCE_DIR = str(Path().resolve()) #os.curdir
+CONFIG_DIR = r"config"
+DATA_DIR = r"data" #path to  data directory
+EXAMPLES_DIR = r"examples"
+DATA_PATH =  os.path.join(ROOT_DIR, DATA_DIR)
+#path, fl = os.path.split(os.path.realpath(__file__))
+data_portal_urls_file = os.path.join(SOURCE_DIR, CONFIG_DIR, "data_portal_urls.json" ) 
 data_portal_urls = read_json_to_dict(data_portal_urls_file)
-data_filenames_file = "data_filenames.json"    
+data_filenames_file = os.path.join(SOURCE_DIR, CONFIG_DIR, "data_filenames.json")
 data_filenames = read_json_to_dict(data_filenames_file)
 
 #setup directories
-ROOT_DIR = os.pardir # root directory
-SOURCE_DIR = os.curdir
-DATA_DIR = r"data" #path to  data directory
-EXAMPLES_DIR = r"examples"
-FISH_DIR = os.path.join(ROOT_DIR, DATA_DIR, "FISH")
-ZOO_DIR = os.path.join(ROOT_DIR, DATA_DIR, "ZOO")
-FLOW_DIR = os.path.join(ROOT_DIR, DATA_DIR, "FLOW")
-WQ_DIR =  os.path.join(ROOT_DIR, DATA_DIR, "WQ") #must manually download WQ datasets
+
+FISH_DIR = os.path.join(DATA_PATH, "FISH")
+ZOO_DIR = os.path.join(DATA_PATH, "ZOO")
+FLOW_DIR = os.path.join(DATA_PATH, "FLOW")
+WQ_DIR =  os.path.join(DATA_PATH, "WQ") #must manually download WQ datasets
 FTP_ZOO_DIR = "IEP_Zooplankton" # the zooplankton drectory name on the cdfw ftp 
 CDFW_FTP_ADDR = data_portal_urls.get("CDFW_FTP_ADDR", "ftp.dfg.ca.gov")
 FTP_DS_DIR = "Delta Smelt"  
 
-
-    #UNZIP THE DATA
-BAYSTUDY_DIR = "BayStudy"    
-FTP_LS_DIR = "BayStudy/CatchMatrices"
+#UNZIP THE DATA
+BAYSTUDY_DIR = "BayStudy"    #TODO: put this in a config file
+FTP_LS_DIR = "BayStudy/CatchMatrices" #TODO: put this in a config file
 LS_SMELT_DIR = os.path.join(FISH_DIR, BAYSTUDY_DIR)
 # IMPORT EMP PHYTOPLANKTON DATA
-PHYTO_DIR = os.path.join(ROOT_DIR, DATA_DIR, "PHYTO")
+PHYTO_DIR = os.path.join(DATA_PATH, "PHYTO")
 
-if not os.path.isdir(DATA_DIR):
-    os.mkdir(DATA_DIR)    
-    
-if not os.path.isdir(EXAMPLES_DIR):
-    os.mkdir(EXAMPLES_DIR)
+if not os.path.isdir(DATA_PATH):
+    os.mkdir(DATA_PATH)    
+#    
+#if not os.path.isdir(EXAMPLES_DIR):
+#    os.mkdir(EXAMPLES_DIR)
     
 if not os.path.isdir(PHYTO_DIR):
     os.mkdir(PHYTO_DIR)
@@ -65,9 +73,9 @@ if not os.path.isdir(LS_SMELT_DIR):
     os.mkdir(LS_SMELT_DIR)    
      
 FILE_PATHS_FILENAME = "file_paths.json" 
-FILE_PATHS_PATH = os.path.join(ROOT_DIR, SOURCE_DIR, FILE_PATHS_FILENAME)
+FILE_PATHS_PATH = os.path.join(SOURCE_DIR, CONFIG_DIR, FILE_PATHS_FILENAME)
 TABLE_NAMES_FILENAME = 'tablenames.txt'
-TABLE_NAMES_PATH = os.path.join(ROOT_DIR, EXAMPLES_DIR, TABLE_NAMES_FILENAME)
+TABLE_NAMES_PATH = os.path.join(SOURCE_DIR, CONFIG_DIR, TABLE_NAMES_FILENAME)
 #read in the filenames and paths and set abs paths to files
 FLOW_INDEX_FILENAME = data_filenames.get('FLOW_INDEX_FILENAME')
 FLOW_INDEX_PATH = os.path.join(FLOW_DIR, FLOW_INDEX_FILENAME)
@@ -121,7 +129,6 @@ SKT_DS_PATH = os.path.join(FISH_DIR, SKT_FILENAME)
 
 
 
-FILE_PATHS_FILENAME = "file_paths.json" 
 datafile_paths = {
                   "LS_SMELT_PATH":LS_SMELT_PATH,
                   "YBP_SALMON_PATH":YBP_SALMON_PATH,
