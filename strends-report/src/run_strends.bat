@@ -6,12 +6,13 @@
 @echo.
 
 
-
 cd /d "%~dp0"
+
+call conda activate strends
 
 python main.py "%*"
 
-
+call conda deactivate
 
 @echo.
 

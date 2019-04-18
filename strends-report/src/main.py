@@ -5,19 +5,21 @@ script to run the status and trends data aggregation tool
 https://data.ca.gov/dataset/water-quality-data
 @author: jsaracen
 """
-from fetch import fetch_data_files
-from read import read_data_files, write_postgresql_table_names
-import os
-import pickle
-from base import engine
+
 import io
 import numpy as np
+import os
+import pickle
 import sqlalchemy
+
+from base import engine
+from fetch import fetch_data_files
+from read import read_data_files, write_postgresql_table_names
+from setup_paths import FILE_PATHS_PATH
+
 #TODO:* Create database schema
 #TODO:* Add logging
 #TODO:* Pass arguments from command line using argparse
-#TODO:* Run this script from a bash file on a task
-
 def fetch_data():
     fetch_data_files()
 
@@ -90,9 +92,9 @@ def store_data(data):
 
 def main(store=False):
     """main entry point for the script"""
-    FILE_PATHS_FILENAME = "file_paths.json" 
+    # FILE_PATHS_FILENAME = "file_paths.json" 
     fetch_data()
-    data = read_data(FILE_PATHS_FILENAME)    
+    data = read_data(FILE_PATHS_PATH)    
     if store:
         write_postgresql_table_names(data)
         store_data(data)    

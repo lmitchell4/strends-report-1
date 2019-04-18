@@ -98,25 +98,37 @@ def read_data_files(FILE_PATHS_FILENAME):
     
     # read data from files into pandas dataframes
     #Flow
+    print("Reading Flow data files...")
+    print("Reading Flow Index data...")
     flow_index = read_flow_index(FLOW_INDEX_PATH)
     #WQ
+    print("Reading EMP Water Quality data files...")
+    print("Reading EMP Water Quality Lab data...")
     emp_wq_lab = read_emp_water_quality(WQ_LAB_PATH)
+    print("Reading EMP Water Quality Field data...")
     emp_wq_field = read_emp_water_quality(WQ_FIELD_PATH)
     #wdl_wq_lab = pd.read_csv(WQ_WDL_PATH)    
     #PHYTOPLANKTON
+    print("Reading EMP Phytoplankton data...")
     emp_phyto = pd.read_csv(EMP_PHYTO_PATH)      
     #ZOOPLANKTON
+    print("Reading Zooplankton data files...")
     #copepod counts from tows
+    print("Reading Zooplankton CB Matrix data...")
     CBmatrix  = pd.read_excel(ZOOPLANKTON_CBMATRIX_PATH, sheet_name="CB CPUE Matrix 1972-2017") 
     # mysids counts from tow
+    print("Reading Zooplankton Mysid data...")
     Mysidmatrix = pd.read_excel(ZOOPLANKTON_MYSID_PATH, sheet_name="Mysid CPUE Matrix 1972-2017")    
+    print("Reading Zooplankton Pump Matrix data...")
     Pumpmatrix = pd.read_excel(ZOOPLANKTON_PUMP_PATH, sheet_name="Pump CPUE Matrix 1972-2017")
-
     #FISH
+    print("Reading Fish data...")
+    print("Reading Delta Juvenile Fish Monitoring Program data...")
     djfmp = pd.read_csv(DJFMP_PATH, low_memory=False)
+    print("Reading Yolo Bypass Salmon data...")
     ybp_salmon = pd.read_csv(YBP_SALMON_PATH, low_memory=False)    
+    print("Reading Longfin Smelt MWT Catch data...")
     ls_smelt = pd.read_excel(LS_SMELT_PATH, sheet_name="MWT Catch Matrix")  
-    
     #TODO: read these table names from an external flat file
     SLS_LS_TABLENAMES = ["Catch", "20mm Stations", "AreaCode1", "Lengths",
                          "Meter Corrections", "Tow Info", "Water Info",
@@ -132,9 +144,14 @@ def read_data_files(FILE_PATHS_FILENAME):
     SKT_DS_TABLENAMES = ["lktblStationsSKT", "tblCatch", "tblFishInfo",
                          "tblOrganismCodes", "tblReproductiveStages",
                          "tblSample", "tblSexLookUp"]
-    
-    SLS_LS_TABLES = get_db_tables(SLS_LS_PATH, SLS_LS_TABLENAMES, SUFFIX="SLS")
-    SKT_DS_TABLES = get_db_tables(SKT_DS_PATH, SKT_DS_TABLENAMES, SUFFIX="SKT")
+    try:        
+        SLS_LS_TABLES = get_db_tables(SLS_LS_PATH, SLS_LS_TABLENAMES, SUFFIX="SLS")
+    except: #pyodbc.Error
+        print("There was an error reading:{}".format(SLS_LS_PATH))
+    try:
+        SKT_DS_TABLES = get_db_tables(SKT_DS_PATH, SKT_DS_TABLENAMES, SUFFIX="SKT")
+    except: #pyodbc.Error
+        print("There was an error reading:{}".format(SKT_DS_PATH))
     
     out_dict = {
                 "flow_index":flow_index, 
