@@ -49,7 +49,7 @@ To install python using Anaconda run the following commands at the Anaconda prom
 
 	`conda activate strends`
 
-#### Installing docker on MS 2016
+#### Installing docker on MS 2016 (ala Remote Desktop running on a VM)
 
 [Source](https://blogs.technet.microsoft.com/canitpro/2016/10/26/step-by-step-setup-docker-on-your-windows-2016-server/)
 
@@ -75,19 +75,25 @@ To install python using Anaconda run the following commands at the Anaconda prom
 
 2. Start a Docker Container that holds persistent storage of the PostgreSQL database by running the shell script:
 	
-	`.$ /create_strends_data.sh`.
+	`$ ./create_strends_data.sh`.
 
 3. Initialize a PostgreSQl server by starting a PostgreSQL Docker Container by running the shell script:
 	
 	`$ ./run_strends_psql.sh`.
 
-4. Populate the database with new data using python. For example by running the python script, `main.py`.
+4. Populate the database with new data using python:
+
+* Run the main script directly `python main.py`.
+* Run the main script by double-clicking `runstrends.bat`, or as a scheduled task.
+
 
 5. Query the PostgreSQl database server in python using `psycopg2` or R using `dbplyr`.
 
 6. You can connect to the database and generate plots in R by running `drivr.R` located in `\examples`
 
 7. Table names and column names are defined in `tablenames.txt` and `columns.xlsx`, respectively.
+
+
 
 #### Docker cheat sheet
 

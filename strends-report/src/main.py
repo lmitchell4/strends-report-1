@@ -20,6 +20,7 @@ from setup_paths import FILE_PATHS_PATH
 #TODO:* Create database schema
 #TODO:* Add logging
 #TODO:* Pass arguments from command line using argparse
+
 def fetch_data():
     fetch_data_files()
 
@@ -77,9 +78,7 @@ def store_data(data):
                 to_postgresql(engine, df, table_name)
             except sqlalchemy.exc.SQLAlchemyError :#catch a specific error  message 
                 print('Could not store {} to database, check database connection {} and try again'.format(table_name.lower(),engine), engine)
-              
     except (Exception, sqlalchemy.exc.OperationalError) as error: 
-
         print("Couldn''t connect to database, make sure its running and try again")#update message to match corresponding error
         print(error)
     except (Exception, sqlalchemy.exc.SQLAlchemyError) as error:

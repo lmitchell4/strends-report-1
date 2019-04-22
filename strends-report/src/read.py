@@ -98,11 +98,11 @@ def read_data_files(FILE_PATHS_FILENAME):
     
     # read data from files into pandas dataframes
     #Flow
-    print("Reading Flow data files...")
+    print("Loading Flow data files...")
     print("Reading Flow Index data...")
     flow_index = read_flow_index(FLOW_INDEX_PATH)
     #WQ
-    print("Reading EMP Water Quality data files...")
+    print("Loading EMP Water Quality data files...")
     print("Reading EMP Water Quality Lab data...")
     emp_wq_lab = read_emp_water_quality(WQ_LAB_PATH)
     print("Reading EMP Water Quality Field data...")
@@ -112,7 +112,7 @@ def read_data_files(FILE_PATHS_FILENAME):
     print("Reading EMP Phytoplankton data...")
     emp_phyto = pd.read_csv(EMP_PHYTO_PATH)      
     #ZOOPLANKTON
-    print("Reading Zooplankton data files...")
+    print("Loading Zooplankton data files...")
     #copepod counts from tows
     print("Reading Zooplankton CB Matrix data...")
     CBmatrix  = pd.read_excel(ZOOPLANKTON_CBMATRIX_PATH, sheet_name="CB CPUE Matrix 1972-2017") 
@@ -122,7 +122,7 @@ def read_data_files(FILE_PATHS_FILENAME):
     print("Reading Zooplankton Pump Matrix data...")
     Pumpmatrix = pd.read_excel(ZOOPLANKTON_PUMP_PATH, sheet_name="Pump CPUE Matrix 1972-2017")
     #FISH
-    print("Reading Fish data...")
+    print("Loading Fish data...")
     print("Reading Delta Juvenile Fish Monitoring Program data...")
     djfmp = pd.read_csv(DJFMP_PATH, low_memory=False)
     print("Reading Yolo Bypass Salmon data...")
@@ -173,8 +173,7 @@ def read_data_files(FILE_PATHS_FILENAME):
 
         
 if __name__ == "__main__":
-    # load in the datafile paths datafiles json file  
-    
+    # load in the datafile paths datafiles json file    
     data = read_data_files(FILE_PATHS_PATH)
     write_postgresql_table_names(data)
     write_table_names(TABLE_NAMES_PATH,
