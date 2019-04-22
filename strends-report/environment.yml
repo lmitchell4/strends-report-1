@@ -1,0 +1,36 @@
+name: strends
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - ca-certificates=2019.3.9=hecc5488_0
+  - certifi=2019.3.9=py37_0
+  - et_xmlfile=1.0.1=py37_1000
+  - intel-openmp=2019.3=203
+  - jdcal=1.4=py_1
+  - krb5=1.16.3=h038dc86_1000
+  - libblas=3.8.0=5_mkl
+  - libcblas=3.8.0=5_mkl
+  - liblapack=3.8.0=5_mkl
+  - libpq=10.6=h4c6b53d_1000
+  - mkl=2019.3=203
+  - numpy=1.16.2=py37h8078771_1
+  - openpyxl=2.5.12=py_0
+  - openssl=1.0.2r=hfa6e2cd_0
+  - pandas=0.23.4=py37h830ac7b_1000
+  - pip=19.0.3=py37_0
+  - psycopg2=2.7.5=py37h74b6da3_1002
+  - pyodbc=4.0.24=py37h6538335_1000
+  - python=3.7.1=h9460c21_1003
+  - python-dateutil=2.8.0=py_0
+  - pytz=2019.1=py_0
+  - setuptools=41.0.0=py37_0
+  - six=1.12.0=py37_1000
+  - sqlalchemy=1.2.14=py37hfa6e2cd_1000
+  - tk=8.6.9=hfa6e2cd_1001
+  - vc=14=0
+  - vs2015_runtime=14.0.25420=0
+  - wheel=0.33.1=py37_0
+  - wincertstore=0.2=py37_1002
+  - xlrd=1.1.0=py_2
+  - zlib=1.2.11=h2fa13f4_1004
