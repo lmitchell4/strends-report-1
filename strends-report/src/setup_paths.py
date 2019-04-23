@@ -30,7 +30,11 @@ SOURCE_DIR = str(Path().resolve()) #os.curdir
 CONFIG_DIR = r"config"
 DATA_DIR = r"data" #path to  data directory
 EXAMPLES_DIR = r"examples"
+RESULTS_DIR = r"results"
+
 DATA_PATH =  os.path.join(ROOT_DIR, DATA_DIR)
+RESULTS_PATH =  os.path.join(ROOT_DIR, DATA_DIR)
+
 #path, fl = os.path.split(os.path.realpath(__file__))
 data_portal_urls_file = os.path.join(SOURCE_DIR, CONFIG_DIR, "data_portal_urls.json" ) 
 data_portal_urls = read_json_to_dict(data_portal_urls_file)
@@ -58,11 +62,14 @@ LS_SMELT_DIR = os.path.join(FISH_DIR, BAYSTUDY_DIR)
 # IMPORT EMP PHYTOPLANKTON DATA
 PHYTO_DIR = os.path.join(DATA_PATH, "PHYTO")
 
-if not os.path.isdir(DATA_PATH):
-    os.mkdir(DATA_PATH)    
+if not os.path.isdir(RESULTS_PATH):
+    os.mkdir(RESULTS_PATH)    
 #    
 #if not os.path.isdir(EXAMPLES_DIR):
 #    os.mkdir(EXAMPLES_DIR)
+
+if not os.path.isdir(DATA_PATH):
+    os.mkdir(DATA_PATH)
     
 if not os.path.isdir(PHYTO_DIR):
     os.mkdir(PHYTO_DIR)
