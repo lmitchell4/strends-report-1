@@ -3,10 +3,6 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-channels:
-  - conda-forge
-  - defaults
-dependencies:
   - asn1crypto=0.24.0=py37_1003
   - ca-certificates=2019.3.9=hecc5488_0
   - certifi=2019.3.9=py37_0
