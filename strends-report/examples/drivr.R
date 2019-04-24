@@ -18,8 +18,8 @@ dbname = "strends"
 pw <- {"your_password"}
 pw <- {"pass"}
 
-# query db using dplyr syntax
 # Connect to local PostgreSQL via dplyr
+# https://www.rdocumentation.org/packages/dplyr/versions/0.5.0/topics/src_postgres
 con <- src_postgres(dbname = dbname,
                         host = 'localhost',
                         port = 5432,
@@ -36,12 +36,13 @@ wqf_table_name = tablenames[3,"V1"]#"emp_wq_field"
 wqf_datatbl = tbl(con, wqf_table_name) 
 #write a query to calculate the average of all water quality parameters at station d10
 station = "D10"
+# query db using dplyr syntax
 summary = wqf_datatbl %>% 
   filter(StationCode==station)  %>% 
   group_by(AnalyteName) %>% 
   summarise(Result = mean(Result, na.rm = TRUE)) %>% 
   arrange(desc(AnalyteName))
-#print the query for QC
+#print the full SQL query statement for QC
 summary %>% show_query()
 #retrieve the data as a tidy dataframe
 wqf_out = summary %>% collect()
