@@ -99,40 +99,89 @@ def read_data_files(FILE_PATHS_FILENAME):
     ZOOPLANKTON_MYSID_PATH = datafile_paths.get("ZOOPLANKTON_MYSID_PATH")
     ZOOPLANKTON_CBMATRIX_PATH = datafile_paths.get("ZOOPLANKTON_CBMATRIX_PATH")
     ZOOPLANKTON_PUMP_PATH = datafile_paths.get("ZOOPLANKTON_PUMP_PATH")
-    
+    out_dict = {}
     # read data from files into pandas dataframes
     #Flow
     print("Loading Flow data files...")
-    print("Reading Flow Index data...")
-    flow_index = read_flow_index(FLOW_INDEX_PATH)
+    try:
+        flow_index = read_flow_index(FLOW_INDEX_PATH)
+    except:
+        print("There was an error reading: {}".format(FLOW_INDEX_PATH))
+    else:
+        print("Reading Flow Index data...")
+        out_dict["flow_index"] = flow_index    
     #WQ
     print("Loading EMP Water Quality data files...")
     print("Reading EMP Water Quality Lab data...")
     emp_wq_lab = read_emp_water_quality(WQ_LAB_PATH)
+    out_dict["emp_wq_lab"]=emp_wq_lab
+
     print("Reading EMP Water Quality Field data...")
     emp_wq_field = read_emp_water_quality(WQ_FIELD_PATH)
+    out_dict["emp_wq_field"] = emp_wq_field
+
     #wdl_wq_lab = pd.read_csv(WQ_WDL_PATH)    
     #PHYTOPLANKTON
     print("Reading EMP Phytoplankton data...")
     emp_phyto = pd.read_csv(EMP_PHYTO_PATH)      
+    out_dict["emp_phyto"] = emp_phyto
     #ZOOPLANKTON
     print("Loading Zooplankton data files...")
-    #copepod counts from tows
-    print("Reading Zooplankton CB Matrix data...")
-    CBmatrix  = pd.read_excel(ZOOPLANKTON_CBMATRIX_PATH, sheet_name="CB CPUE Matrix 1972-2017") 
-    # mysids counts from tow
-    print("Reading Zooplankton Mysid data...")
-    Mysidmatrix = pd.read_excel(ZOOPLANKTON_MYSID_PATH, sheet_name="Mysid CPUE Matrix 1972-2017")    
-    print("Reading Zooplankton Pump Matrix data...")
-    Pumpmatrix = pd.read_excel(ZOOPLANKTON_PUMP_PATH, sheet_name="Pump CPUE Matrix 1972-2017")
+    
+         
+    try:
+        CBmatrix  = pd.read_excel(ZOOPLANKTON_CBMATRIX_PATH, sheet_name="CB CPUE Matrix 1972-2017") 
+    except:
+        print("There was an error reading: {}".format(ZOOPLANKTON_CBMATRIX_PATH))
+    else:
+        #copepod counts from tows
+        print("Reading Zooplankton CB Matrix data...")
+        out_dict["CBmatrix"]=CBmatrix
+        
+    try:
+        Mysidmatrix = pd.read_excel(ZOOPLANKTON_MYSID_PATH, sheet_name="Mysid CPUE Matrix 1972-2017")    
+    except:
+        print("There was an error reading: {}".format(ZOOPLANKTON_MYSID_PATH))
+    else:
+        # mysids counts from tow
+        print("Reading Zooplankton Mysid data...")
+        out_dict["Mysidmatrix"] = Mysidmatrix
+        
+    try:
+        Pumpmatrix = pd.read_excel(ZOOPLANKTON_PUMP_PATH, sheet_name="Pump CPUE Matrix 1972-2017")
+    except:
+        print("There was an error reading: {}".format(ZOOPLANKTON_PUMP_PATH))
+    else:
+        print("Reading Zooplankton Pump Matrix data...")
+        out_dict["Pumpmatrix"] = Pumpmatrix
     #FISH
-    print("Loading Fish data...")
-    print("Reading Delta Juvenile Fish Monitoring Program data...")
-    djfmp = pd.read_csv(DJFMP_PATH, low_memory=False)
-    print("Reading Yolo Bypass Salmon data...")
-    ybp_salmon = pd.read_csv(YBP_SALMON_PATH, low_memory=False)    
-    print("Reading Longfin Smelt MWT Catch data...")
-    ls_smelt = pd.read_excel(LS_SMELT_PATH, sheet_name="MWT Catch Matrix")  
+    
+    print("Loading Fish data...")    
+    try:
+        djfmp = pd.read_csv(DJFMP_PATH, low_memory=False)
+    except:
+        print("There was an error reading: {}".format(DJFMP_PATH))
+    else:
+        print("Reading Delta Juvenile Fish Monitoring Program data...")
+        out_dict["djfmp"] = djfmp
+    
+    try:
+        ybp_salmon = pd.read_csv(YBP_SALMON_PATH, low_memory=False)    
+    except:
+        print("There was an error reading: {}".format(YBP_SALMON_PATH))
+    else:
+        print("Reading Yolo Bypass Salmon data...")
+        out_dict["ybp_salmon"] = ybp_salmon
+    
+    try:
+        ls_smelt = pd.read_excel(LS_SMELT_PATH, sheet_name="MWT Catch Matrix")  
+    except:
+        print("There was an error reading: {}".format(LS_SMELT_PATH))
+    else:
+        print("Reading Longfin Smelt MWT Catch data...")
+        out_dict['ls_smelt'] = ls_smelt
+        
+
     #TODO: read these table names from an external flat file
     SLS_LS_TABLENAMES = ["Catch", "20mm Stations", "AreaCode1", "Lengths",
                          "Meter Corrections", "Tow Info", "Water Info",
@@ -149,18 +198,7 @@ def read_data_files(FILE_PATHS_FILENAME):
                          "tblOrganismCodes", "tblReproductiveStages",
                          "tblSample", "tblSexLookUp"]
 
-    out_dict = {
-                "flow_index":flow_index, 
-                "emp_wq_lab":emp_wq_lab,
-                "emp_wq_field":emp_wq_field,
-                "emp_phyto":emp_phyto, 
-                "CBmatrix":CBmatrix, 
-                "Mysidmatrix":Mysidmatrix,
-                "Pumpmatrix":Pumpmatrix, 
-                "djfmp":djfmp,
-                "ybp_salmon":ybp_salmon, 
-                "ls_smelt":ls_smelt
-                }
+
     try:        
         SLS_LS_TABLES = get_db_tables(SLS_LS_PATH, SLS_LS_TABLENAMES, SUFFIX="SLS")
     except: #pyodbc.Error

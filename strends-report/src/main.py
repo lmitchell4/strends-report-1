@@ -15,7 +15,7 @@ import sqlalchemy
 from base import engine
 from fetch import fetch_data_files
 from read import read_data_files, write_postgresql_table_names
-from setup_paths import FILE_PATHS_PATH
+from setup_paths import FILE_PATHS_PATH,RESULTS_PATH
 
 #TODO:* Create database schema
 #TODO:* Add logging
@@ -107,11 +107,11 @@ if __name__ == "__main__":
     data = main(store=store)
   #  if store2db == False:
         #save it to a pickle for later viewing instead of writing to the db
-    PICKLED_DATA_PATH = os.path.join(os.pardir, 'results', 'data.pickle')
+    PICKLED_DATA_PATH = os.path.join(RESULTS_PATH, 'data.pickle')
     with open(PICKLED_DATA_PATH, 'wb') as handle:
         pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
         #load it from a pickle for qucik viewing
-#        PICKLED_DATA_PATH = os.path.join(os.pardir, 'results', 'data.pickle')
+#        PICKLED_DATA_PATH = os.path.join(RESULTS_PATH, 'data.pickle')
 #
 #        
 #        with open(PICKLED_DATA_PATH, 'rb') as handle:

@@ -143,8 +143,7 @@ def fetch_data_files():
             ybp_salmon = pd.DataFrame()
         finally:
             # save the file locally
-            ybp_salmon.to_csv(YBP_SALMON_PATH, index=False)
-            
+            ybp_salmon.to_csv(YBP_SALMON_PATH, index=False)            
     # USFWS Delta Juvenile Fish Monitoring Program
     fileconfig = Path(DJFMP_PATH)    
     if not fileconfig.is_file():
