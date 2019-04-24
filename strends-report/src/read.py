@@ -12,12 +12,13 @@ import os
 import pandas as pd
 import pyodbc
 
-from setup_paths import FILE_PATHS_PATH,TABLE_NAMES_PATH
+from setup_paths import FILE_PATHS_PATH,TABLE_NAMES_PATH, EXAMPLES_PATH
 
 def read_flow_index(filename):
     flow = pd.read_csv(filename)
     return flow
-    
+
+
 def read_emp_water_quality(filename):
     emp_wq = pd.read_excel(filename)
     return emp_wq
@@ -29,6 +30,7 @@ def read_emp_water_quality_wdl(filename):
                           encoding='unicode_escape')
     return emp_wq
 
+
 def read_json_to_dict(json_file):
     with open(json_file, "r") as f:
         json_dict = json.load(f)
@@ -39,13 +41,14 @@ def write_table_names(fname, tablenames):
     with open(fname, 'w') as f:
         for item in tablenames:
             f.write("%s\n" % item)
+
             
 def write_postgresql_table_names(data, cols_filename = 'columns.xlsx',
-                                 tables_filename='tablenames.txt'):
+                                 tables_filename='tablenames.txt',
+                                 dest_path=EXAMPLES_PATH):
     """data = dict()"""
     keys=[]
-    column_names = []
-    dest_path = os.path.join(os.pardir,'examples')
+    column_names = []    
     for name, df in data.items():
         column_names.append(df.columns.tolist())
         keys.append(name.lower())
@@ -54,8 +57,9 @@ def write_postgresql_table_names(data, cols_filename = 'columns.xlsx',
                      index=False)
     tablenames = pd.DataFrame(data=keys)
     tablenames.to_csv(os.path.join(dest_path, tables_filename),
-                      index=False,header=None)
+                      index=False, header=None)
     return
+
 
 def get_db_tables(PATH_TO_DB, TABLE_NAMES, SUFFIX='SKT'):        
     # connect to CDFW access database files
@@ -144,15 +148,7 @@ def read_data_files(FILE_PATHS_FILENAME):
     SKT_DS_TABLENAMES = ["lktblStationsSKT", "tblCatch", "tblFishInfo",
                          "tblOrganismCodes", "tblReproductiveStages",
                          "tblSample", "tblSexLookUp"]
-    try:        
-        SLS_LS_TABLES = get_db_tables(SLS_LS_PATH, SLS_LS_TABLENAMES, SUFFIX="SLS")
-    except: #pyodbc.Error
-        print("There was an error reading:{}".format(SLS_LS_PATH))
-    try:
-        SKT_DS_TABLES = get_db_tables(SKT_DS_PATH, SKT_DS_TABLENAMES, SUFFIX="SKT")
-    except: #pyodbc.Error
-        print("There was an error reading:{}".format(SKT_DS_PATH))
-    
+
     out_dict = {
                 "flow_index":flow_index, 
                 "emp_wq_lab":emp_wq_lab,
@@ -165,17 +161,28 @@ def read_data_files(FILE_PATHS_FILENAME):
                 "ybp_salmon":ybp_salmon, 
                 "ls_smelt":ls_smelt
                 }
-    #joing the dicts of datatables form the access databases to the out dict
-    out_dict.update(SLS_LS_TABLES)
-    out_dict.update(SKT_DS_TABLES)
-    out_data= {k.lower().replace(" ","_"): v for k, v in out_dict.items()}
+    try:        
+        SLS_LS_TABLES = get_db_tables(SLS_LS_PATH, SLS_LS_TABLENAMES, SUFFIX="SLS")
+    except: #pyodbc.Error
+        print("There was an error reading: {}".format(SLS_LS_PATH))
+    else:
+        out_dict.update(SLS_LS_TABLES)
+    try:
+        SKT_DS_TABLES = get_db_tables(SKT_DS_PATH, SKT_DS_TABLENAMES, SUFFIX="SKT")
+    except: #pyodbc.Error
+        print("There was an error reading: {}".format(SKT_DS_PATH))
+    else:
+    #add access database datatables to the outdict
+        out_dict.update(SKT_DS_TABLES)
+    finally:
+        out_data= {k.lower().replace(" ","_"): v for k, v in out_dict.items()}
     return out_data
 
         
 if __name__ == "__main__":
     # load in the datafile paths datafiles json file    
     data = read_data_files(FILE_PATHS_PATH)
-    write_postgresql_table_names(data)
+    write_postgresql_table_names(data, dest_path=EXAMPLES_PATH)
     write_table_names(TABLE_NAMES_PATH,
                       data.keys()) # for querying data with ext hardware
     

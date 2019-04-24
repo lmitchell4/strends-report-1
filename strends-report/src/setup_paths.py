@@ -28,12 +28,13 @@ def write_dict_to_json(sample_dict, json_file):
 ROOT_DIR = str(Path().resolve().parent) #os.pardir # root directory
 SOURCE_DIR = str(Path().resolve()) #os.curdir
 CONFIG_DIR = r"config"
-DATA_DIR = r"data" #path to  data directory
+DATA_DIR = r"data" #path to data directory
 EXAMPLES_DIR = r"examples"
 RESULTS_DIR = r"results"
 
 DATA_PATH =  os.path.join(ROOT_DIR, DATA_DIR)
 RESULTS_PATH =  os.path.join(ROOT_DIR, DATA_DIR)
+EXAMPLES_PATH =  os.path.join(ROOT_DIR, EXAMPLES_DIR)
 
 #path, fl = os.path.split(os.path.realpath(__file__))
 data_portal_urls_file = os.path.join(SOURCE_DIR, CONFIG_DIR, "data_portal_urls.json" ) 

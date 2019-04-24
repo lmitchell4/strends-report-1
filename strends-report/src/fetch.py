@@ -26,23 +26,10 @@ from setup_paths import DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL,EMP_PHYTOPLAN
 from setup_paths import data_filenames
 
 
-def files_subdirs_in_root(path):
-    """
-    https://thomassileo.name/blog/2013/12/12/tracking-changes-in-directories-with-python/
-    """
-    files = []
-    subdirs = []
-    for root, dirs, filenames in os.walk(path):
-        for subdir in dirs:
-            subdirs.append(os.path.relpath(os.path.join(root, subdir), path))
-    
-        for f in filenames:
-            files.append(os.path.relpath(os.path.join(root, f), path))
-    return files, subdirs
-
 def data_pull_message(fileconfig):
     print('No local copy of {}, so I am now downloading it...'.format(fileconfig.absolute(),))
     return
+
 
 def get_ftp_file(addr, ftp_path, fname, to_path="", verbose=True):
     """ Function to grab a file, fname, from an ftp specified by addr
@@ -136,14 +123,12 @@ def fetch_data_files():
     
     fileconfig = Path(EMP_PHYTO_PATH)
     if not fileconfig.is_file():
-        print('No local copy of {}, so I''m downloading it...'.format(fileconfig.absolute(),))
-
+        data_pull_message(fileconfig)
         emp_phyto = pd.read_csv(EMP_PHYTOPLANKTON_URL)
         emp_phyto.to_csv(EMP_PHYTO_PATH, index=False)
     # IMPORT FISH DATA
     # Retrieve data from the EDI data repos
-    # YOLO BYP SALMON FISH
-    
+    # YOLO BYP SALMON FISH    
     fileconfig = Path(YBP_SALMON_PATH)
   #  YOLO_BYPASS_FISH_MONITORING_PROGRAM_URL= r'https://portal.edirepository.org/nis/dataviewer?packageid=edi.233.2&entityid=015e494911cf35c90089ced5a3127334'
     if not fileconfig.is_file():
@@ -159,8 +144,7 @@ def fetch_data_files():
             ybp_salmon.to_csv(YBP_SALMON_PATH, index=False)
             
     # USFWS Delta Juvenile Fish Monitoring Program
-    fileconfig = Path(DJFMP_PATH)
-    
+    fileconfig = Path(DJFMP_PATH)    
     if not fileconfig.is_file():
         data_pull_message(fileconfig)
         djfmps_edi = requests.get(DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL,
@@ -168,7 +152,6 @@ def fetch_data_files():
         djfmp = pd.read_csv(io.StringIO(djfmps_edi.decode("utf-8")))
         # save the file locally
         djfmp.to_csv(DJFMP_PATH, index=False)
-
     # move files from ftp to local space
     # TODO: ONLY COPY FILES IF AND ONLY IF THEY ARE UPDATED)
     # Smelt Larva Survey (CDFW): Longfin Smelt
@@ -205,6 +188,7 @@ def main():
     """main entry point for the script"""
     fetch_data_files()
     return
+
 
 if __name__ == "__main__":
     

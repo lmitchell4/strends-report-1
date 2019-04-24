@@ -15,6 +15,38 @@ import os
 import pandas as pd
 
 
+def get_total_size(ftpObj, directory):
+    size = 0
+    for filename in ftpObj.nlst(directory):
+        try:
+            ftpObj.cwd(filename)
+            size += ftpObj.get_total_size(filename)
+        except:
+            ftpObj.voidcmd('TYPE I')
+            size += ftpObj.size(filename)
+    return size
+
+
+def getSize(filename):
+    st = os.stat(filename)
+    return st.st_size
+
+
+def files_subdirs_in_root(path):
+    """
+    https://thomassileo.name/blog/2013/12/12/tracking-changes-in-directories-with-python/
+    """
+    files = []
+    subdirs = []
+    for root, dirs, filenames in os.walk(path):
+        for subdir in dirs:
+            subdirs.append(os.path.relpath(os.path.join(root, subdir), path))
+    
+        for f in filenames:
+            files.append(os.path.relpath(os.path.join(root, f), path))
+    return files, subdirs
+
+
 def list_of_files(path, fmatch):
 #    path = r'C:\Users\saraceno\Documents\Code\Python\WEBB\SS_PSDS'
 #    fmatch = '*$ls.txt'

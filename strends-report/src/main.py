@@ -30,7 +30,8 @@ def read_data(FILE_PATHS_FILENAME):
 
 
 def df_str_cleanup(df):
-    for col in df.columns: #To replace all line breaks in all textual columns b/c they return DataError  when loading 
+    #To replace all line breaks in all textual columns b/c they return DataError  when loading 
+    for col in df.columns: 
         if df[col].dtype == np.object_:
             df[col] = df[col].str.replace('\n','');
             df[col] = df[col].str.replace('\r','');
@@ -99,6 +100,7 @@ def main(store=False):
         store_data(data)    
     return data
 
+
 if __name__ == "__main__":
     #read the raw data and optionally store to the db
     store = True
@@ -108,7 +110,7 @@ if __name__ == "__main__":
     PICKLED_DATA_PATH = os.path.join(os.pardir, 'results', 'data.pickle')
     with open(PICKLED_DATA_PATH, 'wb') as handle:
         pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
-        #load it to a pickle for later viewing
+        #load it from a pickle for qucik viewing
 #        PICKLED_DATA_PATH = os.path.join(os.pardir, 'results', 'data.pickle')
 #
 #        
