@@ -130,6 +130,7 @@ def fetch_data_files():
     # Retrieve data from the EDI data repos
     # YOLO BYP SALMON FISH    
     fileconfig = Path(YBP_SALMON_PATH)
+    #TODO: write a helper function to pull data from EDI
   #  YOLO_BYPASS_FISH_MONITORING_PROGRAM_URL= r'https://portal.edirepository.org/nis/dataviewer?packageid=edi.233.2&entityid=015e494911cf35c90089ced5a3127334'
     if not fileconfig.is_file():
         data_pull_message(fileconfig)
@@ -138,6 +139,7 @@ def fetch_data_files():
                                    verify=path_to_certs).content
             ybp_salmon = pd.read_csv(io.StringIO(ybp_edi.decode("utf-8")))
         except:
+            print("Couldn''t download data from {}".format(YOLO_BYPASS_FISH_MONITORING_PROGRAM_URL))
             ybp_salmon = pd.DataFrame()
         finally:
             # save the file locally
@@ -147,11 +149,16 @@ def fetch_data_files():
     fileconfig = Path(DJFMP_PATH)    
     if not fileconfig.is_file():
         data_pull_message(fileconfig)
-        djfmps_edi = requests.get(DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL,
-                                  verify=path_to_certs).content
-        djfmp = pd.read_csv(io.StringIO(djfmps_edi.decode("utf-8")))
+        try:
+            djfmps_edi = requests.get(DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL,
+                                      verify=path_to_certs).content
+            djfmp = pd.read_csv(io.StringIO(djfmps_edi.decode("utf-8")))
+        except:
+            print("Couldn''t download data from {}".format(DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL))
+            djfmp = pd.DataFrame()
+        finally:
         # save the file locally
-        djfmp.to_csv(DJFMP_PATH, index=False)
+            djfmp.to_csv(DJFMP_PATH, index=False)
     # move files from ftp to local space
     # TODO: ONLY COPY FILES IF AND ONLY IF THEY ARE UPDATED)
     # Smelt Larva Survey (CDFW): Longfin Smelt
