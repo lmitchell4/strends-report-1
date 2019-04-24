@@ -58,7 +58,7 @@ def to_postgresql(engine, df, table_name, if_exists='replace', sep='\t', encodin
         cursor = connection.cursor()
         cursor.copy_from(output, table_name, sep=sep, null='')
         connection.commit()
-        print("DB successfully updated ")
+        print("Database successfully updated with table {}".format(table_name))
     except (Exception, sqlalchemy.exc.SQLAlchemyError) as error:
         print(error)
         print("Rolling back connection")
@@ -72,7 +72,7 @@ def to_postgresql(engine, df, table_name, if_exists='replace', sep='\t', encodin
 
 def store_data(data):
     try:        
-        print('Storing data...')
+        print('Storing data to postgresSQL database...')
         for table_name, df in data.items():
             try:   
                 print("Writing table {}".format(table_name))
@@ -104,12 +104,14 @@ def main(store=False):
 if __name__ == "__main__":
     #read the raw data and optionally store to the db
     store = True
+    save_to_pickle = True
     data = main(store=store)
   #  if store2db == False:
         #save it to a pickle for later viewing instead of writing to the db
-    PICKLED_DATA_PATH = os.path.join(RESULTS_PATH, 'data.pickle')
-    with open(PICKLED_DATA_PATH, 'wb') as handle:
-        pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    if save_to_pickle:
+        PICKLED_DATA_PATH = os.path.join(RESULTS_PATH, 'data.pickle')
+        with open(PICKLED_DATA_PATH, 'wb') as handle:
+            pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
         #load it from a pickle for qucik viewing
 #        PICKLED_DATA_PATH = os.path.join(RESULTS_PATH, 'data.pickle')
 #
