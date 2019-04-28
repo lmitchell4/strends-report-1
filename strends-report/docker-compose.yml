@@ -4,7 +4,7 @@ services:
   
   db:
     container_name: strends_psql
-    image: postgres:9
+    image: postgres:11
     environment:
       POSTGRES_USER: usr
       POSTGRES_PASSWORD: pass
