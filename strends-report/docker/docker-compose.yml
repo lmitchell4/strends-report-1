@@ -1,17 +1,22 @@
-version: '3.1'
+version: "3.1"
 
 services:
-     db:
-         image: kiasaki/alpine-postgres
-         environment:
-             POSTGRES_USER: foo
-             POSTGRES_PASSWORD: bar
-             POSTGRES_DB: faz 
-         volumes:
-             - db_data:/var/lib/postgresql/data
-         ports:
-             - 5432:5432/tcp
- 
+  db:
+    container_name: strends_psql
+    image: postgres:9
+    environment:
+      POSTGRES_USER: usr
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: strends 
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432/tcp
+
+  #TODO: Create an app service like this
+  # app:
+    # container_name: strends_app
+    # image: python 3.6 alpine?
+    # ports:
 volumes:
-    db_data:
-         driver: local
+  db_data:
