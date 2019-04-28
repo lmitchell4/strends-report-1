@@ -1,0 +1,24 @@
+version: "3.1"
+
+services:
+  
+  db:
+    container_name: strends_psql
+    image: postgres:11
+    environment:
+      POSTGRES_USER: usr
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: strends 
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432/tcp
+
+  app:
+    container_name: strends_app
+    build: ./src
+    depends_on: 
+      - db
+
+volumes:
+  db_data:
