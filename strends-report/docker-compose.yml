@@ -1,6 +1,7 @@
 version: "3.1"
 
 services:
+  
   db:
     container_name: strends_psql
     image: postgres:9
@@ -13,10 +14,14 @@ services:
     ports:
       - 5432:5432/tcp
 
-  #TODO: Create an app service like this
-  # app:
-    # container_name: strends_app
-    # image: python 3.6 alpine?
-    # ports:
+  web:
+    build: .
+    volumes:
+      - .:/src
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+
 volumes:
   db_data:
