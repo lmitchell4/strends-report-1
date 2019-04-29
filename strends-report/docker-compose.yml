@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: strends 
     volumes:
-      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+      - ./database/init_tables/init_tables.sql:/docker-entrypoint-initdb.d/init_tables.sql
       - db_data:/var/lib/postgresql/data
     ports:
       - 5432:5432/tcp
