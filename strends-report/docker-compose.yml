@@ -3,17 +3,18 @@ version: "3.1"
 services:
   
   db:
-    container_name: strends_psql
+    container_name: strends_postgres
     image: postgres:11
     environment:
       POSTGRES_USER: usr
       POSTGRES_PASSWORD: pass
-      POSTGRES_DB: strends 
+      POSTGRES_DB: strends
     volumes:
       - ./database/init_tables/init_tables.sql:/docker-entrypoint-initdb.d/init_tables.sql
       - db_data:/var/lib/postgresql/data
     ports:
       - 5432:5432/tcp
+    restart: "no"
 
   app:
     container_name: strends_app
