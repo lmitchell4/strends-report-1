@@ -4,7 +4,8 @@ services:
   
   db:
     container_name: strends_psql
-    image: postgres:11
+    build: ./database/
+    # image: postgres:11
     environment:
       POSTGRES_USER: usr
       POSTGRES_PASSWORD: pass
@@ -16,7 +17,7 @@ services:
 
   app:
     container_name: strends_app
-    build: ./src
+    build: ./src/
     depends_on: 
       - db
 
