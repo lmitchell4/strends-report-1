@@ -4,13 +4,13 @@ services:
   
   db:
     container_name: strends_psql
-    build: ./database/
-    # image: postgres:11
+    image: postgres:11
     environment:
       POSTGRES_USER: usr
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: strends 
     volumes:
+      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
       - db_data:/var/lib/postgresql/data
     ports:
       - 5432:5432/tcp
