@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import pandas as pd
 import requests
+import ssl
 import sys
 import zipfile
 #from setup_paths import * #LS_SMELT_PATH, YBP_SALMON_PATH SKT_LS_PATH', 'SLS_DS_PATH', 'DJFMP_PATH', 'EMP_PHYTO_PATH', 'LS_ZIP_FILE_PATH', 'FLOW_INDEX_PATH', 'WQ_FIELD_PATH', 'WQ_LAB_PATH', 'WDL_WQ_PATH', 'ZOOPLANKTON_MYSID_PATH', 'ZOOPLANKTON_CBMATRIX_PATH', 'ZOOPLANKTON_PUMP_PATH'
@@ -192,6 +193,7 @@ def fetch_data_files():
 
 def main():
     """main entry point for the script"""
+    ssl._create_default_https_context = ssl._create_unverified_context
     fetch_data_files()
     return
 
