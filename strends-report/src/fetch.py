@@ -13,7 +13,6 @@ import os
 from pathlib import Path
 import pandas as pd
 import requests
-import ssl
 import sys
 import zipfile
 #from setup_paths import * #LS_SMELT_PATH, YBP_SALMON_PATH SKT_LS_PATH', 'SLS_DS_PATH', 'DJFMP_PATH', 'EMP_PHYTO_PATH', 'LS_ZIP_FILE_PATH', 'FLOW_INDEX_PATH', 'WQ_FIELD_PATH', 'WQ_LAB_PATH', 'WDL_WQ_PATH', 'ZOOPLANKTON_MYSID_PATH', 'ZOOPLANKTON_CBMATRIX_PATH', 'ZOOPLANKTON_PUMP_PATH'
@@ -76,7 +75,7 @@ def get_zooplankton(CDFW_FTP_ADDR, ftp_zooplankton_dir, ZOO_DIR, filenames):
     if not fileconfig.is_file():
         data_pull_message(fileconfig)
         get_ftp_file(CDFW_FTP_ADDR, ftp_zooplankton_dir, cb_fname,
-                     to_path=ZOO_DIR)
+                     to_path=ZOO_DIR, verbose=False)
     # mysids counts from tow
     my_fname = filenames.get('ZOOPLANKTON_MYSID_FILENAME',
                              "1972-2017MysidMatrix.xlsx")
@@ -85,7 +84,7 @@ def get_zooplankton(CDFW_FTP_ADDR, ftp_zooplankton_dir, ZOO_DIR, filenames):
     if not fileconfig.is_file():
         data_pull_message(fileconfig)
         get_ftp_file(CDFW_FTP_ADDR, ftp_zooplankton_dir, my_fname,
-                     to_path=ZOO_DIR)
+                     to_path=ZOO_DIR, verbose=False)
     # mysids counts on the pump samples
     pump_fname = filenames.get('ZOOPLANKTON_PUMP_FILENAME',
                                "1972-2017PumpMatrix.xlsx")
@@ -94,7 +93,7 @@ def get_zooplankton(CDFW_FTP_ADDR, ftp_zooplankton_dir, ZOO_DIR, filenames):
     if not fileconfig.is_file():
         data_pull_message(fileconfig)
         get_ftp_file(CDFW_FTP_ADDR, ftp_zooplankton_dir, pump_fname,
-                     to_path=ZOO_DIR)
+                     to_path=ZOO_DIR, verbose=False)
 
 
 def extractzip(loc, outloc):
@@ -125,8 +124,15 @@ def fetch_data_files():
     fileconfig = Path(EMP_PHYTO_PATH)
     if not fileconfig.is_file():
         data_pull_message(fileconfig)
-        emp_phyto = pd.read_csv(EMP_PHYTOPLANKTON_URL)
-        emp_phyto.to_csv(EMP_PHYTO_PATH, index=False)
+        try:
+            emp_phyto_requests = requests.get(EMP_PHYTOPLANKTON_URL,verify=path_to_certs).content
+            emp_phyto = pd.read_csv(io.StringIO(emp_phyto_requests.decode("utf-8")))
+        except:
+            print("Couldn''t download data from {}".format(EMP_PHYTOPLANKTON_URL))
+            emp_phyto = pd.DataFrame()
+        finally:
+        # save the file locally
+            emp_phyto.to_csv(EMP_PHYTO_PATH, index=False)
     # IMPORT FISH DATA
     # Retrieve data from the EDI data repos
     # YOLO BYP SALMON FISH    
@@ -193,7 +199,6 @@ def fetch_data_files():
 
 def main():
     """main entry point for the script"""
-    ssl._create_default_https_context = ssl._create_unverified_context
     fetch_data_files()
     return
 
