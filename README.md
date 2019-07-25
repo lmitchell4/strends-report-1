@@ -15,59 +15,73 @@ Seasonal based reporting of the status and trends of select IEP data
 
 ##### python 
 
-* Create a system environmental variable `REQUESTS_CA_BUNDLE` and set the path to your Departments MITM certificate (example: `ca-bundle.crt`)
+###### Setup `conda` SSL certificates
 
-#### packages (for fetching data and populating the PostgresSQL database)
+ Create a certificates file
+
+1. In windows, open `certmgr`
+
+2. Open Trusted Root Certification Authorities Certificates
+
+3. Open the `Water-RootCA` certificate
+
+4. “Details”
+
+5. “Copy to File…”
+
+6. Click “Next”
+
+7. Select ”Base-64…”
+
+8. Click “Next”
+
+9. Name it “ca-certs”, and place it somewhere you can find it. It will automatically be created as a .cer file. 
+
+* Create a system environmental variable `REQUESTS_CA_BUNDLE` and set the path to your Departments MITM certificate (example: `ca-bundle.cer`)
+
+* Setup conda to reference the certificates file to access packages
+
+`conda config --set ssl_verify "path\to\certificate\file\my_ca-bundle.cer"`
+
+#### python packages (for fetching data and populating the PostgresSQL database)
 
 * `pandas`
 * `pyodbc`
 * `sqlalchemy`
 * `xlrd`
 
-
-
-##### R packages (for querying data and generating plots)
+##### R packages (for querying PostgreSQL database and generating plots)
 
 * `dplyr`
 * `dbplyr`
 * `ggplot2`
 * `lubridate`
+* `RPostgreSQL`
 
 #### Docker 
 
 * Install Docker for Windows following the instructions [here](https://docs.docker.com/docker-for-windows/install/)
 
+	* Note: You may have to enable hardware virtualization for Docker to work properly. Typically this is accomplished
+	in your computers BIOS. Depending on the computer manufactuter, the sytem BIOS may entered by pressing `F10` immediately following 
+	computer reboot. Consult your computer systems manual or your IT department for more information.
+
 #### Python
 
-To install python using Anaconda run the following commands at the Anaconda prompt
+To install python using Anaconda run the following commands at the Anaconda prompt.
 
-1. Create the environment from the `environment.yml` file:
+1. Navigate to the `src` directory:
+
+	`cd strends-report\strends-report\src`
+
+2. Create the environment from the `environment.yml` file:
 
 	`conda env create -f environment.yml`
 
-2. Activate the new environment: 
+3. Activate the new environment: 
 
 	`conda activate strends`
 
-#### Installing docker on MS 2016 (ala Remote Desktop running on a VM)
-
-[Source](https://blogs.technet.microsoft.com/canitpro/2016/10/26/step-by-step-setup-docker-on-your-windows-2016-server/)
-
-1. Open an elevated Windows PowerShell session and run the following commands to install the OneGet PowerShell module. 
- 
-	`Install-Module -Name DockerMsftProvider -Repository PSGallery -Force`
-  
-	-Type "Y" to continue
-  
-2. Next we will install the latest version of Docker using the following command.  when prompted to tell you that the source is untrusted and whether or not you want to continue.  type “A” to continue.
-  
-	`Install-Package -Name docker -ProviderName DockerMsftProvider`
-
-	-Type "A" to continue
-	
-3. When the installation is complete, reboot the computer using this PowerShell command.
-
-	`Restart-Computer -Force`
 	
 ### Usage
 
@@ -99,29 +113,29 @@ To install python using Anaconda run the following commands at the Anaconda prom
 
 * List Docker CLI commands
 
-	`docker`
-	
-	`docker container --help`
+`docker`
+
+`docker container --help`
 
 * Display Docker version and info
 
-	`docker --version`
+`docker --version`
 
-	`docker version`
+`docker version`
 
-	`docker info`
+`docker info`
 
 * List Docker images
 
-	`docker image ls`
+`docker image ls`
 
 * List Docker containers (running, all, all in quiet mode)
 
-	`docker container ls`
-	
-	`docker container ls --all`
-	
-	`docker container ls -aq`
+`docker container ls`
+
+`docker container ls --all`
+
+`docker container ls -aq`
 
 * Stop all docker containers:
 
@@ -130,7 +144,7 @@ To install python using Anaconda run the following commands at the Anaconda prom
 * Remove all docker containers:
 
 	`docker container rm $(docker container ls -aq)`
-	
+
 * More docker commands:
 
 	```
@@ -148,3 +162,24 @@ To install python using Anaconda run the following commands at the Anaconda prom
 	docker push username/repository:tag            # Upload tagged image to registry
 	docker run username/repository:tag                   # Run image from a registry
 	```
+	
+	
+#### Installing docker on MS 2016 (ala Remote Desktop running on a VM)
+
+[Source](https://blogs.technet.microsoft.com/canitpro/2016/10/26/step-by-step-setup-docker-on-your-windows-2016-server/)
+
+1. Open an elevated Windows PowerShell session and run the following commands to install the OneGet PowerShell module. 
+ 
+	`Install-Module -Name DockerMsftProvider -Repository PSGallery -Force`
+  
+	-Type "Y" to continue
+  
+2. Next we will install the latest version of Docker using the following command.  when prompted to tell you that the source is untrusted and whether or not you want to continue.  type “A” to continue.
+  
+	`Install-Package -Name docker -ProviderName DockerMsftProvider`
+
+	-Type "A" to continue
+	
+3. When the installation is complete, reboot the computer using this PowerShell command.
+
+	`Restart-Computer -Force`
