@@ -120,7 +120,7 @@ def read_data_files(FILE_PATHS_FILENAME):
     emp_wq_field = read_emp_water_quality(WQ_FIELD_PATH)
     out_dict["emp_wq_field"] = emp_wq_field
 
-    #wdl_wq_lab = pd.read_csv(WQ_WDL_PATH)    
+    #wdl_wq_lab = pd.read_csv(WQ_WDL_PATH)
     #PHYTOPLANKTON
     print("Reading EMP Phytoplankton data...")
     emp_phyto = pd.read_csv(EMP_PHYTO_PATH)      
@@ -130,7 +130,7 @@ def read_data_files(FILE_PATHS_FILENAME):
     
          
     try:
-        CBmatrix  = pd.read_excel(ZOOPLANKTON_CBMATRIX_PATH, sheet_name="CB CPUE Matrix 1972-2017") 
+        CBmatrix  = pd.read_excel(ZOOPLANKTON_CBMATRIX_PATH, sheet_name="CB CPUE Matrix 1972-2018") 
     except:
         print("There was an error reading: {}".format(ZOOPLANKTON_CBMATRIX_PATH))
     else:
@@ -139,7 +139,7 @@ def read_data_files(FILE_PATHS_FILENAME):
         out_dict["CBmatrix"]=CBmatrix
         
     try:
-        Mysidmatrix = pd.read_excel(ZOOPLANKTON_MYSID_PATH, sheet_name="Mysid CPUE Matrix 1972-2017")    
+        Mysidmatrix = pd.read_excel(ZOOPLANKTON_MYSID_PATH, sheet_name="Mysid CPUE Matrix 1972-2018 ")    
     except:
         print("There was an error reading: {}".format(ZOOPLANKTON_MYSID_PATH))
     else:
@@ -148,7 +148,7 @@ def read_data_files(FILE_PATHS_FILENAME):
         out_dict["Mysidmatrix"] = Mysidmatrix
         
     try:
-        Pumpmatrix = pd.read_excel(ZOOPLANKTON_PUMP_PATH, sheet_name="Pump CPUE Matrix 1972-2017")
+        Pumpmatrix = pd.read_excel(ZOOPLANKTON_PUMP_PATH, sheet_name=" Pump CPUE Matrix 1972-2018")
     except:
         print("There was an error reading: {}".format(ZOOPLANKTON_PUMP_PATH))
     else:
