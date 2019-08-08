@@ -70,9 +70,9 @@ Seasonal based reporting of the status and trends of select IEP data
 
 To install python using Anaconda run the following commands at the Anaconda prompt.
 
-1. Navigate to the `src` directory:
+1. Navigate to the `strends-report` directory:
 
-	`cd strends-report\strends-report\src`
+	`cd strends-report\strends-report`
 
 2. Create the environment from the `environment.yml` file:
 
@@ -89,17 +89,19 @@ To install python using Anaconda run the following commands at the Anaconda prom
 
 2. Start a Docker Container that holds persistent storage of the PostgreSQL database by running the shell script:
 	
-	`$ ./create_strends_data.sh`.
+	`$ ./docker/create_strends_data.sh`.
 
 3. Initialize a PostgreSQl server by starting a PostgreSQL Docker Container by running the shell script:
 	
-	`$ ./run_strends_psql.sh`.
+	`$ ./docker/run_strends_psql.sh`.
 
 4. Populate the database with new data using python:
 
-* Run the main script directly `python main.py`.
-* Run the main script by double-clicking `runstrends.bat`, or as a scheduled task.
+* Run the main script directly 
 
+	`cd src`
+
+	`python main.py`
 
 5. Query the PostgreSQl database server in python using `psycopg2` or R using `dbplyr`.
 
