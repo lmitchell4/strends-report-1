@@ -38,8 +38,8 @@ dependencies:
   - sqlalchemy=1.2.14=py37hfa6e2cd_1000
   - tk=8.6.9=hfa6e2cd_1001
   - urllib3=1.24.2=py37_0
-  - vc=14=0
-  - vs2015_runtime=14.0.25420=0
+  - vc=14.1
+  - vs2015_runtime=14.15
   - wheel=0.33.1=py37_0
   - win_inet_pton=1.1.0=py37_0
   - wincertstore=0.2=py37_1002
