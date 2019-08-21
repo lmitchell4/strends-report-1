@@ -33,10 +33,11 @@ def main():
     LS_SMELT_FILENAME = "Bay Study_MWT_1980-2017_FishMatrix.xlsx"
     LS_SMELT_FILENAME_ZIP = "Bay Study_FishCatchMatrices_1980-2017.zip"
     SLS_FILENAME = "SLS.mdb"
-    SKT_FILENAME = "SKT.mdb"
+    SKT_FILENAME = "SKT.accdb"
     YBP_SALMON_FILENAME = "ybp_salmon.csv"  
     DELTA_JUVENILE_FISH_MONITORING_PROGRAM_FILENAME = "djfmp.csv"
-    
+    USFWS_REDBLUFF_SALMON_FILENAME = "usfws_redbluff_salmon.csv"
+    CDFW_FMWT_FILENAME = "cdfw_fmwt.csv"
     filenames = {"FLOW_INDEX_FILENAME":FLOW_INDEX_FILENAME,
                  "EMP_PHYTOPLANKTON_FILENAME":EMP_PHYTOPLANKTON_FILENAME,
                  "ZOOPLANKTON_MYSID_FILENAME":ZOOPLANKTON_MYSID_FILENAME,
@@ -45,18 +46,22 @@ def main():
                  "LS_SMELT_FILENAME":LS_SMELT_FILENAME,
                  "LS_SMELT_FILENAME_ZIP":LS_SMELT_FILENAME_ZIP,
                  "SLS_FILENAME":SLS_FILENAME,
-                 "SKT_FILENAME":SKT_FILENAME,                 
+                 "SKT_FILENAME":SKT_FILENAME,
                  "YBP_SALMON_FILENAME":YBP_SALMON_FILENAME,
                  "DELTA_JUVENILE_FISH_MONITORING_PROGRAM_FILENAME": DELTA_JUVENILE_FISH_MONITORING_PROGRAM_FILENAME,
                  "WQ_LAB_FILENAME": WQ_LAB_FILENAME,
                  "WQ_FIELD_FILENAME": WQ_FIELD_FILENAME,
                  "WDL_WQ":WDL_WQ,
+                 "USFWS_REDBLUFF_SALMON_FILENAME":USFWS_REDBLUFF_SALMON_FILENAME,
+                 "CDFW_FMWT_FILENAME":CDFW_FMWT_FILENAME,
+                 
     }
-
+#TODO: made a dedicated helper function for writing json files
     with open(OUTFILENAME, 'w') as fp:
-        json.dump(filenames, fp)
+        json.dump(filenames, fp, indent = 4, sort_keys=True)
     return
 
 
-if __name__ == "__main__":
-    sys.exit(main())
+#if __name__ == "__main__":
+#    sys.exit(main())
+main()

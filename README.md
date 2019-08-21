@@ -89,11 +89,11 @@ To install python using Anaconda run the following commands at the Anaconda prom
 
 2. Start a Docker Container that holds persistent storage of the PostgreSQL database by running the shell script:
 	
-	`$ ./docker/create_strends_data.sh`.
+	`./docker/create_strends_data.sh`
 
-3. Initialize a PostgreSQl server by starting a PostgreSQL Docker Container by running the shell script:
+3. Initialize a PostgreSQl server by starting a PostgreSQL Docker Container by running the shell script at the bash prompt ($):
 	
-	`$ ./docker/run_strends_psql.sh`.
+	`./docker/run_strends_psql.sh`
 
 4. Populate the database with new data using python:
 

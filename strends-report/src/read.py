@@ -12,7 +12,7 @@ import os
 import pandas as pd
 import pyodbc
 
-from setup_paths import FILE_PATHS_PATH,TABLE_NAMES_PATH, EXAMPLES_PATH
+from setup_paths import FILE_PATHS_PATH, TABLE_NAMES_PATH, EXAMPLES_PATH
 
 def read_flow_index(filename):
     flow = pd.read_csv(filename)
@@ -22,6 +22,7 @@ def read_flow_index(filename):
 def read_emp_water_quality(filename):
     emp_wq = pd.read_excel(filename)
     return emp_wq
+
 
 def read_emp_water_quality_wdl(filename):
     """The file is actually a tab delimited file, depsite being 
@@ -69,7 +70,6 @@ def get_db_tables(PATH_TO_DB, TABLE_NAMES, SUFFIX='SKT'):
     # connect to db
     if next((s for s in SQL_DRIVERS if DRV in s), None):
         CONXN = pyodbc.connect("DRIVER={};DBQ={};PWD={}".format(DRV, PATH_TO_DB, PWD))
-
         dataframes = []
         TABLE_NAMES_APPENDED =  [SUFFIX + '_' +  k for k in TABLE_NAMES]
         for TABLE_NAME in TABLE_NAMES:
@@ -99,6 +99,8 @@ def read_data_files(FILE_PATHS_FILENAME):
     ZOOPLANKTON_MYSID_PATH = datafile_paths.get("ZOOPLANKTON_MYSID_PATH")
     ZOOPLANKTON_CBMATRIX_PATH = datafile_paths.get("ZOOPLANKTON_CBMATRIX_PATH")
     ZOOPLANKTON_PUMP_PATH = datafile_paths.get("ZOOPLANKTON_PUMP_PATH")
+    USFWS_REDBLUFF_SALMON_PATH = datafile_paths.get("USFWS_REDBLUFF_SALMON_PATH")
+    CDFW_FMWT_PATH = datafile_paths.get("CDFW_FMWT_PATH")
     out_dict = {}
     # read data from files into pandas dataframes
     #Flow
@@ -114,7 +116,7 @@ def read_data_files(FILE_PATHS_FILENAME):
     print("Loading EMP Water Quality data files...")
     print("Reading EMP Water Quality Lab data...")
     emp_wq_lab = read_emp_water_quality(WQ_LAB_PATH)
-    out_dict["emp_wq_lab"]=emp_wq_lab
+    out_dict["emp_wq_lab"] = emp_wq_lab
 
     print("Reading EMP Water Quality Field data...")
     emp_wq_field = read_emp_water_quality(WQ_FIELD_PATH)
@@ -126,8 +128,7 @@ def read_data_files(FILE_PATHS_FILENAME):
     emp_phyto = pd.read_csv(EMP_PHYTO_PATH)      
     out_dict["emp_phyto"] = emp_phyto
     #ZOOPLANKTON
-    print("Loading Zooplankton data files...")
-    
+    print("Loading Zooplankton data files...")    
          
     try:
         CBmatrix  = pd.read_excel(ZOOPLANKTON_CBMATRIX_PATH, sheet_name="CB CPUE Matrix 1972-2018") 
@@ -157,6 +158,20 @@ def read_data_files(FILE_PATHS_FILENAME):
     #FISH
     
     print("Loading Fish data...")    
+    try:
+        cdfw_fmwt= pd.read_csv(CDFW_FMWT_PATH, low_memory=False,index_col=False)
+    except:
+        print("There was an error reading: {}".format(CDFW_FMWT_PATH))
+    else:
+        print("Reading CDFW Fall Midwater Trawl data...")
+        out_dict["CDFW_FMWT"] = cdfw_fmwt
+    try:
+        usfws_salmon = pd.read_csv(USFWS_REDBLUFF_SALMON_PATH, low_memory=False)
+    except:
+        print("There was an error reading: {}".format(USFWS_REDBLUFF_SALMON_PATH))
+    else:
+        print("Reading USFWS Redbluff Salmon data from SacPass...")
+        out_dict["usfws_salmon"] = usfws_salmon
     try:
         djfmp = pd.read_csv(DJFMP_PATH, low_memory=False)
     except:
@@ -223,4 +238,3 @@ if __name__ == "__main__":
     write_postgresql_table_names(data, dest_path=EXAMPLES_PATH)
     write_table_names(TABLE_NAMES_PATH,
                       data.keys()) # for querying data with ext hardware
-    

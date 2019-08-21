@@ -5,6 +5,8 @@ emp_phyto
 cbmatrix
 mysidmatrix
 pumpmatrix
+cdfw_fmwt
+usfws_salmon
 djfmp
 ybp_salmon
 ls_smelt
@@ -16,10 +18,3 @@ sls_meter_corrections
 sls_tow_info
 sls_water_info
 sls_wt_factors
-skt_lktblstationsskt
-skt_tblcatch
-skt_tblfishinfo
-skt_tblorganismcodes
-skt_tblreproductivestages
-skt_tblsample
-skt_tblsexlookup

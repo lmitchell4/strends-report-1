@@ -9,6 +9,8 @@ INPUT:
 import json
 import os
 from pathlib import Path
+import data_filenames_to_json
+import data_portal_urls_to_json
 
 
 def read_json_to_dict(json_file):
@@ -44,6 +46,7 @@ data_filenames = read_json_to_dict(data_filenames_file)
 
 FILE_PATHS_FILENAME = "file_paths.json" 
 FILE_PATHS_PATH = os.path.join(SOURCE_DIR, CONFIG_DIR, FILE_PATHS_FILENAME)
+#creat a table names file for R to read later on when mapping the db
 TABLE_NAMES_FILENAME = 'tablenames.txt'
 TABLE_NAMES_PATH = os.path.join(ROOT_DIR, EXAMPLES_DIR, TABLE_NAMES_FILENAME)
 #setup directories
@@ -117,9 +120,15 @@ YOLO_BYPASS_FISH_MONITORING_PROGRAM_URL = data_portal_urls.get("YOLO_BYPASS_FISH
 
 DELTA_JUVENILE_FISH_MONITORING_PROGRAM_FILENAME = data_filenames.get("DELTA_JUVENILE_FISH_MONITORING_PROGRAM_FILENAME", "djfmp.csv")
 DJFMP_PATH = os.path.join(FISH_DIR, DELTA_JUVENILE_FISH_MONITORING_PROGRAM_FILENAME)
-
 DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL = data_portal_urls.get("DELTA_JUVENILE_FISH_MONITORING_PROGRAM_URL")
 
+CDFW_FMWT_FILENAME = data_filenames.get("CDFW_FMWT_FILENAME", "cdfw_FMWT.csv")
+CDFW_FMWT_PATH = os.path.join(FISH_DIR, CDFW_FMWT_FILENAME)
+CDFW_FMWT_URL = data_portal_urls.get("CDFW_FMWT_URL")
+
+USFWS_REDBLUFF_SALMON_FILENAME = data_filenames.get("USFWS_REDBLUFF_SALMON_FILENAME", "usfws_redbluff_salmon.csv")
+USFWS_REDBLUFF_SALMON_PATH = os.path.join(FISH_DIR, USFWS_REDBLUFF_SALMON_FILENAME)
+USFWS_REDBLUFF_SALMON_URL = data_portal_urls.get("USFWS_REDBLUFF_SALMON_URL")
 
 SLS_FILENAME = data_filenames.get("SLS_FILENAME", "SLS.mdb")
 SLS_LS_PATH = os.path.join(FISH_DIR, SLS_FILENAME)
@@ -132,10 +141,8 @@ LS_SMELT_FILENAME = data_portal_urls.get("LS_SMELT_FILENAME",
                                          "Bay Study_MWT_1980-2017_FishMatrix.xlsx")
 LS_SMELT_PATH = os.path.join(LS_SMELT_DIR, LS_SMELT_FILENAME)
     
-SKT_FILENAME = data_filenames.get("SKT_FILENAME", "SKT.mdb")    
+SKT_FILENAME = data_filenames.get("SKT_FILENAME", "SKT.accdb")    
 SKT_DS_PATH = os.path.join(FISH_DIR, SKT_FILENAME)
-
-
 
 datafile_paths = {
                   "LS_SMELT_PATH":LS_SMELT_PATH,
@@ -152,6 +159,8 @@ datafile_paths = {
                   "ZOOPLANKTON_MYSID_PATH":ZOOPLANKTON_MYSID_PATH,
                   "ZOOPLANKTON_CBMATRIX_PATH":ZOOPLANKTON_CBMATRIX_PATH,
                   "ZOOPLANKTON_PUMP_PATH":ZOOPLANKTON_PUMP_PATH,
+                  "USFWS_REDBLUFF_SALMON_PATH":USFWS_REDBLUFF_SALMON_PATH,
+                  "CDFW_FMWT_PATH":CDFW_FMWT_PATH,
                   }
 
 write_dict_to_json(datafile_paths, FILE_PATHS_PATH)

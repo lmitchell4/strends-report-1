@@ -1,6 +1,0 @@
-pandas==0.23.4
-pyodbc==4.0.24
-psycopg2==2.7.5
-sqlalchemy==1.2.14
-xlrd==1.1.0
-openpyxl==2.5.12
