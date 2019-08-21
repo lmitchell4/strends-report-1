@@ -1,4 +1,4 @@
-name: strends-major-nopon-nospy
+name: strends
 channels:
   - https://repo.anaconda.com/pkgs/free
   - conda-forge
